@@ -122,7 +122,7 @@ with st.sidebar:
     )
 
     st.divider()
-    
+
     # Esportazione Dati (Funzionalità Avanzata)
     csv_report = gdp_df.to_csv(index=False).encode('utf-8')
     st.download_button("📥 Scarica Report Dati (CSV)", data=csv_report, file_name='rgandja_gdp_report.csv')
@@ -184,11 +184,11 @@ else:
     st.subheader("💡 Insights Strategici")
     c1, c2 = st.columns(2)
     with c1:
-        if 'ITA' in selected_countries:
-            ita_data = filtered_df[filtered_df['Country Code'] == 'ITA']
-            if len(ita_data) > 1:
-                total_growth = ((ita_data['GDP'].iloc[-1] - ita_data['GDP'].iloc[0]) / ita_data['GDP'].iloc[0]) * 100
-                st.metric("Focus Italia", f"{total_growth:+.1f}%", "Crescita nel periodo")
+     focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
+    if len(focus_data) > 1:
+        total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
+        st.metric(f"Focus {focus_country}", f"{total_growth:+.1f}%", "Crescita nel periodo")
+
     with c2:
         if not filtered_df.empty:
             leader = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
