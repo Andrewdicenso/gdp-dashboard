@@ -150,8 +150,6 @@ else:
     # 🔄 Auto-refresh ogni 60 secondi
     st_autorefresh(interval=60000, key="refresh_trend")
 
-
-
     # B. ANALISI STORICA E SHOCK (Grafico Lineare)
     st.subheader("📈 Analisi Trend & Eventi Critici")
     fig_line = px.line(filtered_df, x="Year", y="GDP", color="Country Code", template="plotly_dark")
