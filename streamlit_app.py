@@ -139,7 +139,9 @@ else:
     ].dropna()
 
     # A. MAPPA MONDIALE (Effetto Wow)
-    st.subheader("Global Economic Intelligence")
+    col1, col2 = st.columns([1,2])
+    with col2:
+        st.subheader("Global Economic Intelligence")
     map_year_data = gdp_df[gdp_df['Year'] == to_year].dropna()
     fig_map = px.choropleth(
         map_year_data, 
