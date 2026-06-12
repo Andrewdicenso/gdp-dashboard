@@ -5,6 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from pathlib import Path
 from sklearn.linear_model import LinearRegression
+from streamlit_autorefresh import st_autorefresh
 
 # --- 0. CONFIGURAZIONE FILE ---
 DATA_FILENAME = "data/gdp_data.csv"  # ✅ Percorso CORRETTO!
@@ -145,6 +146,10 @@ else:
     st.plotly_chart(fig_map, use_container_width=True)
 
     st.divider()
+
+    # 🔄 Auto-refresh ogni 60 secondi
+    st_autorefresh(interval=60000, key="refresh_trend")
+
 
     # B. ANALISI STORICA E SHOCK (Grafico Lineare)
     st.subheader("📈 Analisi Trend & Eventi Critici")
