@@ -85,6 +85,7 @@ st.subheader("📈 Analisi Traiettoria e Break Strutturali")
 
 fig = px.line(filtered_gdp_df, x='Year', y='GDP', color='Country Code', 
               template="plotly_dark",
+              color_discrete_sequence=px.colors.qualitative.Antique)
 
 # Aggiungiamo i punti di Anomalia in rosso
 anomalies = filtered_gdp_df[filtered_gdp_df['Is_Anomaly'] == True]
