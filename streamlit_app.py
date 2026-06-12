@@ -64,7 +64,7 @@ def get_gdp_data():
         # Trasformiamo le colonne degli anni in righe (Pivot)
         gdp_df = raw_gdp_df.melt(
             ['Country Code', 'Country Name'], 
-            [str(x) for x in range(1960, 2026)], 
+            [str(x) for x in range(1960, 2023)], 
             var_name='Year',
             value_name='GDP'
         )
