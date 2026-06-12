@@ -113,6 +113,13 @@ with st.sidebar:
         available_countries, 
         ['ITA', 'USA', 'DEU', 'FRA', 'CHN']
     )
+
+    st.subheader("🎯 Focus Paese")
+    focus_country = st.selectbox(
+    "Seleziona il Paese Focus",
+    available_countries,
+    index=0
+    )
     
     st.divider()
     # Esportazione Dati (Funzionalità Avanzata)
