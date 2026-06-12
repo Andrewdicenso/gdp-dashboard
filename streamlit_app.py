@@ -146,8 +146,15 @@ else:
 
     st.divider()
 
-    # 🔄 Auto-refresh ogni 60 secondi
-    st_autorefresh(interval=60000, key="refresh_trend")
+    # 🔄 Auto-refresh ogni 60 secondi (senza moduli esterni)
+    st.markdown("""
+    <script>
+        setTimeout(function(){
+            window.location.reload();
+        }, 60000);
+    </script>
+    """, unsafe_allow_html=True)
+
 
     # B. ANALISI STORICA E SHOCK (Grafico Lineare)
     st.subheader("📈 Analisi Trend & Eventi Critici")
