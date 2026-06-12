@@ -10,7 +10,7 @@ from sklearn.linear_model import LinearRegression
 DATA_FILENAME = "data/gdp_data.csv"  # ✅ Percorso CORRETTO!
 
 # --- 1. CONFIGURAZIONE E BRANDING (Stile rgandja.com) ---
-st.set_page_config(layout="wide", page_title="RGandja | GDP Intelligence", page_icon='📈')
+st.set_page_config(layout="wide", page_title="RGandja", page_icon='📈')
 
 st.markdown("""
     <style>
@@ -31,7 +31,7 @@ st.markdown("""
     
     /* Header Brand */
     .brand-text { 
-        font-size: 2.2rem; 
+        font-size: 2.5rem; 
         font-weight: bold; 
         font-family: 'Playfair Display', serif; 
         color: #E3B341; 
@@ -45,7 +45,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 2. HEADER BRANDIZZATO
-col_logo, col_title = st.columns([1, 8])
+col_logo, col_title = st.columns([1,3,1 ])
 with col_logo:
     try:
         st.image("logo.png", width=60)
