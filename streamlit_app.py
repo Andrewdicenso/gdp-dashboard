@@ -53,7 +53,7 @@ with col_logo:
         st.write("📈")
 
 with col_title:
-    st.markdown('<span class="brand-text">RGandja | Global Economic Intelligence</span>', unsafe_allow_html=True)
+    st.markdown('<span class="brand-text">RGandja</span>', unsafe_allow_html=True)
 
 # --- 3. DATA ENGINE (Logica Originale + Ottimizzazione) ---
 @st.cache_data
@@ -96,10 +96,10 @@ gdp_df = detect_anomalies(gdp_df)
 # --- 5. SIDEBAR (Control Panel Brandizzato) ---
 with st.sidebar:
     try:
-        st.image("logo.png", width=120)
+        st.image("logo.png", width=100)
     except:
         pass
-    st.title("RGandja Admin")
+    st.title("RGandja")
     st.caption("Strategic Decision Support Tool")
     st.divider()
     
@@ -139,7 +139,7 @@ else:
     ].dropna()
 
     # A. MAPPA MONDIALE (Effetto Wow)
-    st.subheader("🌍 Asset Allocation Globale")
+    st.subheader("Global Economic Intelligence")
     map_year_data = gdp_df[gdp_df['Year'] == to_year].dropna()
     fig_map = px.choropleth(
         map_year_data, 
