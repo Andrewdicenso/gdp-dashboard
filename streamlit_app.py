@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from pathlib import Path
+from pathlib import Path 
 
 # --- 1. BRANDING & CONFIG (Stile rgandja.com) ---
 st.set_page_config(layout="wide", page_title="Executive GDP Intelligence", page_icon=':chart_with_upwards_trend:')
