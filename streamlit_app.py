@@ -1,163 +1,70 @@
+py
 import streamlit as st
 import pandas as pd
-import math
-from pathlib import Path
+import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-import numpy as np
-py
-# --- BRANDING & STILE PERSONALIZZATO (rgandja.com Style) ---
+from pathlib import Path
+
+# --- 1. BRANDING & CONFIG (Stile rgandja.com) ---
+st.set_page_config(layout="wide", page_title="Executive GDP Intelligence", page_icon=':chart_with_upwards_trend:')
+
 st.markdown("""
     <style>
-    /* Sfondo principale e Sidebar */
-    .stApp {
-        background-color: #0E1117; /* Nero profondo */
-        color: #FFFFFF;
-    }
-    [data-testid="stSidebar"] {
-        background-color: #161B22; /* Grigio scuro per contrasto */
-        border-right: 1px solid #30363D;
-    }
-    
-    /* Font e Titoli (stile elegante) */
-    h1, h2, h3 {
-        font-family: 'Playfair Display', serif; /* Font più editoriale */
-        color: #E3B341; /* Oro/Giallo Premium (cambialo con il tuo colore) */
-    }
-    
-    /* Metriche e Box */
-    div[data-testid="stMetric"] {
-        background-color: #1C2128;
-        border: 1px solid #30363D;
-        padding: 15px;
-        border-radius: 10px;
-    }
-    
-    /* Bottoni e Slider */
-    .stSlider > div > div > div > div {
-        background-color: #E3B341 !important;
-    }
-    
-    /* Nascondi il menu Streamlit per un look più "Sito Proprietario" */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    .stApp { background-color: #0E1117; color: #FFFFFF; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; color: #E3B341; }
+    div[data-testid="stMetric"] { background-color: #1C2128; border: 1px solid #30363D; padding: 15px; border-radius: 10px; }
     </style>
 """, unsafe_allow_html=True)
 
-# --- CONFIGURAZIONE PROFESSIONALE ---
-st.set_page_config(
-    page_title='Executive GDP Intelligence',
-    page_icon=':chart_with_upwards_trend:',
-    layout="wide" # Fondamentale per il look Executive
-)
-
-# 1. Caricamento Dati (Manteniamo la tua funzione originale)
+# --- 2. DATA ENGINE (Salvato e Ottimizzato) ---
 @st.cache_data
 def get_gdp_data():
     DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
     raw_gdp_df = pd.read_csv(DATA_FILENAME)
-    MIN_YEAR, MAX_YEAR = 1960, 2022
-    
-    gdp_df = raw_gdp_df.melt(
-        ['Country Code'],
-        [str(x) for x in range(MIN_YEAR, MAX_YEAR + 1)],
-        'Year', 'GDP'
-    )
+    # Estraiamo anche i nomi per la mappa
+    gdp_df = raw_gdp_df.melt(['Country Code', 'Country Name'], [str(x) for x in range(1960, 2023)], 'Year', 'GDP')
     gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
     return gdp_df
 
-# 2. Logica Avanzata: Analizzatore di Anomalie (Nuovo!)
-def detect_anomalies(df, threshold=2.5):
-    # Calcoliamo la variazione percentuale annua per ogni paese
-    df = df.sort_values(['Country Code', 'Year'])
-    df['GDP_Change'] = df.groupby('Country Code')['GDP'].pct_change()
-    
-    # Identifichiamo anomalie statistiche (es. crolli o boom improvvisi)
-    mean_change = df['GDP_Change'].mean()
-    std_change = df['GDP_Change'].std()
-    df['Is_Anomaly'] = (np.abs(df['GDP_Change'] - mean_change) > threshold * std_change)
-    return df
-
-# Inizializzazione dati
 gdp_df = get_gdp_data()
-gdp_df = detect_anomalies(gdp_df)
 
-# --- SIDEBAR (Pulizia del layout) ---
+# --- 3. SIDEBAR & DOWNLOAD (Funzionalità Avanzata) ---
 with st.sidebar:
     st.title("⚙️ Control Panel")
-    st.info("Configura l'analisi executive")
-    
-    min_year, max_year = int(gdp_df['Year'].min()), int(gdp_df['Year'].max())
-    from_year, to_year = st.slider('Periodo di Analisi', min_year, max_year, [2000, max_year])
-    
+    from_year, to_year = st.slider('Timeline', 1960, 2022, [2000, 2022])
     countries = gdp_df['Country Code'].unique()
-    selected_countries = st.multiselect(
-        'Seleziona Paesi Target',
-        countries,
-        ['DEU', 'FRA', 'GBR', 'ITA', 'USA', 'JPN'] # Aggiunta ITA per default
-    )
+    selected_countries = st.multiselect('Target Countries', countries, ['ITA', 'USA', 'DEU', 'FRA'])
+    
+    # TASTO DOWNLOAD CSV
+    csv_data = gdp_df.to_csv(index=False).encode('utf-8')
+    st.download_button("📥 Download Data (CSV)", data=csv_data, file_name='gdp_export.csv', mime='text/csv')
 
-# --- MAIN DASHBOARD (Executive Layout) ---
-st.title("🌎 Global GDP Executive Intelligence")
-st.markdown(f"**Analisi dinamica del PIL: {from_year} - {to_year}** | *Anomaly Detection Engine Active*")
+# --- 4. MAPPA MONDIALE (Novità!) ---
+st.title("🌎 Global Economic Footprint")
+map_year_df = gdp_df[gdp_df['Year'] == to_year]
+fig_map = px.choropleth(map_year_df, locations="Country Code", color="GDP", hover_name="Country Name",
+                        color_continuous_scale=px.colors.sequential.Goldred, template="plotly_dark")
+fig_map.update_layout(height=400, margin={"r":0,"t":0,"l":0,"b":0})
+st.plotly_chart(fig_map, use_container_width=True)
 
-# Metriche High-Level
-filtered_gdp_df = gdp_df[
-    (gdp_df['Country Code'].isin(selected_countries)) & 
-    (gdp_df['Year'] >= from_year) & (gdp_df['Year'] <= to_year)
-]
+# --- 5. ANALISI E PREVISIONI (Trendline integrata) ---
+st.header("📈 Economic Trajectory & Forecasting")
+filtered_df = gdp_df[(gdp_df['Country Code'].isin(selected_countries)) & (gdp_df['Year'] >= from_year) & (gdp_df['Year'] <= to_year)]
 
-cols = st.columns(len(selected_countries) if selected_countries else 1)
-for i, country in enumerate(selected_countries):
-    country_data = filtered_gdp_df[filtered_gdp_df['Country Code'] == country]
-    if not country_data.empty:
-        last_val = country_data['GDP'].iloc[-1] / 1e9
-        prev_val = country_data['GDP'].iloc[0] / 1e9
-        growth = ((last_val - prev_val) / prev_val) * 100
-        cols[i % len(cols)].metric(f"{country}", f"${last_val:,.0f}B", f"{growth:+.1f}% Total")
+fig_line = px.scatter(filtered_df, x="Year", y="GDP", color="Country Code", 
+                     trendline="lowess", # Previsione statistica
+                     template="plotly_dark")
+st.plotly_chart(fig_line, use_container_width=True)
 
-st.divider()
-
-# --- GRAFICO AVANZATO PLOTLY (L'effetto WOW) ---
-st.subheader("📈 Analisi Traiettoria e Break Strutturali")
-
-fig = px.line(filtered_gdp_df, x='Year', y='GDP', color='Country Code', 
-              template="plotly_dark",
-              color_discrete_sequence=px.colors.qualitative.Antique)
-
-# Aggiungiamo i punti di Anomalia in rosso
-anomalies = filtered_gdp_df[filtered_gdp_df['Is_Anomaly'] == True]
-if not anomalies.empty:
-    fig.add_trace(go.Scatter(
-        x=anomalies['Year'], y=anomalies['GDP'],
-        mode='markers',
-        marker=dict(color='Crimson', size=8, symbol='x'),
-        name='Anomalia Rilevata',
-        hovertemplate="<b>Anomalia Economica</b><br>Anno: %{x}<br>Paese: %{text}",
-        text=anomalies['Country Code']
-    ))
-
-fig.update_layout(hovermode="x unified", height=500)
-st.plotly_chart(fig, use_container_width=True)
-
-# --- ANALISI AUTOMATICA (Data Storytelling) ---
-st.subheader("🔍 Executive Insights")
+# --- 6. INSIGHTS AUTOMATICI (L'effetto WOW) ---
+st.subheader("💡 Intelligence Reports")
 c1, c2 = st.columns(2)
-
 with c1:
-    st.write("**Eventi Significativi Rilevati:**")
-    if not anomalies.empty:
-        for _, row in anomalies.tail(3).iterrows():
-            st.warning(f"⚠️ Shock rilevato in **{row['Country Code']}** nel **{row['Year']}** (Variazione: {row['GDP_Change']:.1%})")
-    else:
-        st.success("Nessuna anomalia strutturale rilevata nel periodo selezionato.")
-
+    if 'ITA' in selected_countries:
+        ita_data = filtered_df[filtered_df['Country Code'] == 'ITA']
+        growth = ((ita_data['GDP'].iloc[-1] - ita_data['GDP'].iloc[0]) / ita_data['GDP'].iloc[0]) * 100
+        st.metric("Performance Italia", f"{growth:+.1f}%", "Nel periodo scelto")
 with c2:
-    st.write("**Analisi di Performance:**")
-    top_country = filtered_gdp_df.groupby('Country Code')['GDP'].last().idxmax()
-    st.info(f"La nazione con il PIL più alto nel {to_year} è **{top_country}**. L'algoritmo suggerisce stabilità per i mercati selezionati.")
-            value=f'{last_gdp:,.0f}B',
-            delta=growth,
-            delta_color=delta_color
-        )
+    top_country = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
+    st.info(f"**Leader di Mercato:** {top_country} detiene attualmente il PIL più alto nella tua selezione.")
