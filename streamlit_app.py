@@ -7,7 +7,7 @@ from pathlib import Path
 from sklearn.linear_model import LinearRegression
 
 # --- 0. CONFIGURAZIONE FILE ---
-DATA_FILENAME = "gdp_data.csv"  # 👈 Definisci il percorso del tuo file CSV
+DATA_FILENAME = "data/gdp_data.csv"  # ✅ Percorso CORRETTO!
 
 # --- 1. CONFIGURAZIONE E BRANDING (Stile rgandja.com) ---
 st.set_page_config(layout="wide", page_title="RGandja | GDP Intelligence", page_icon='📈')
