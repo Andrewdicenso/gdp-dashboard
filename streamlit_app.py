@@ -5,6 +5,45 @@ from pathlib import Path
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
+py
+# --- BRANDING & STILE PERSONALIZZATO (rgandja.com Style) ---
+st.markdown("""
+    <style>
+    /* Sfondo principale e Sidebar */
+    .stApp {
+        background-color: #0E1117; /* Nero profondo */
+        color: #FFFFFF;
+    }
+    [data-testid="stSidebar"] {
+        background-color: #161B22; /* Grigio scuro per contrasto */
+        border-right: 1px solid #30363D;
+    }
+    
+    /* Font e Titoli (stile elegante) */
+    h1, h2, h3 {
+        font-family: 'Playfair Display', serif; /* Font più editoriale */
+        color: #E3B341; /* Oro/Giallo Premium (cambialo con il tuo colore) */
+    }
+    
+    /* Metriche e Box */
+    div[data-testid="stMetric"] {
+        background-color: #1C2128;
+        border: 1px solid #30363D;
+        padding: 15px;
+        border-radius: 10px;
+    }
+    
+    /* Bottoni e Slider */
+    .stSlider > div > div > div > div {
+        background-color: #E3B341 !important;
+    }
+    
+    /* Nascondi il menu Streamlit per un look più "Sito Proprietario" */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
 
 # --- CONFIGURAZIONE PROFESSIONALE ---
 st.set_page_config(
