@@ -6,8 +6,8 @@ import plotly.graph_objects as go
 from pathlib import Path
 from sklearn.linear_model import LinearRegression
 
-# --- 1. CONFIGURAZIONE E BRANDING ---
-st.set_page_config(layout="wide", page_title="Executive GDP Intelligence", page_icon=':chart_with_upwards_trend:')
+# --- 1. CONFIGURAZIONE E BRANDING (Versione Aggiornata RGandja) ---
+st.set_page_config(layout="wide", page_title="RGandja | GDP Intelligence", page_icon='logo.png')
 
 st.markdown("""
     <style>
@@ -15,11 +15,31 @@ st.markdown("""
     h1, h2, h3 { font-family: 'Playfair Display', serif; color: #E3B341; }
     div[data-testid="stMetric"] { background-color: #1C2128; border: 1px solid #30363D; padding: 15px; border-radius: 10px; }
     .stSlider > div > div > div > div { background-color: #E3B341 !important; }
-    /* Nascondi menu Streamlit per look professionale */
+    
+    /* Stili per il Logo e Brand Header */
+    .brand-container { display: flex; align-items: center; margin-bottom: 20px; }
+    .brand-text { font-size: 2.2rem; font-weight: bold; font-family: 'Playfair Display', serif; color: #E3B341; margin-left: 15px; }
+    
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
+
+# 2. HEADER CON LOGO E BRAND (Sopra il titolo principale)
+col_l, col_r = st.columns([1, 8])
+with col_l:
+    try:
+        st.image("logo.png", width=80)
+    except:
+        st.write("📈") # Icona di backup se il file logo.png non è ancora su GitHub
+
+with col_r:
+    st.markdown('<div class="brand-container"><span class="brand-text">RGandja | Global Economic Intelligence</span></div>', unsafe_allow_html=True)
+
+# --- 3. DATA ENGINE (Il resto del codice continua qui...) ---
+@st.cache_data
+def get_gdp_data():
+# ... continua con il resto del file ...
 
 # --- 2. DATA ENGINE ---
 @st.cache_data
