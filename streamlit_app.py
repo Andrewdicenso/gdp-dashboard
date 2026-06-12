@@ -48,7 +48,7 @@ st.markdown("""
 col_logo, col_title = st.columns([1, 8])
 with col_logo:
     try:
-        st.image("logo.png", width=80)
+        st.image("logo.png", width=60)
     except:
         st.write("📈")
 
@@ -119,8 +119,7 @@ with st.sidebar:
     "Seleziona il Paese Focus",
     available_countries,
     index=available_countries.index("ITA") if "ITA" in available_countries else 0
-   )
-
+    )
 
     st.divider()
 
@@ -134,8 +133,8 @@ if not selected_countries:
 else:
     # Filtro dati dinamico
     filtered_df = gdp_df[
-        (gdp_df['Country Code'].isin(selected_countries)) & 
-        (gdp_df['Year'] >= from_year) & 
+        (gdp_df['Country Code'].isin(selected_countries)) &
+        (gdp_df['Year'] >= from_year) &
         (gdp_df['Year'] <= to_year)
     ].dropna()
 
