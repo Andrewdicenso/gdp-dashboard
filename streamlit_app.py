@@ -120,8 +120,9 @@ with st.sidebar:
     available_countries,
     index=0
     )
-    
+
     st.divider()
+    
     # Esportazione Dati (Funzionalità Avanzata)
     csv_report = gdp_df.to_csv(index=False).encode('utf-8')
     st.download_button("📥 Scarica Report Dati (CSV)", data=csv_report, file_name='rgandja_gdp_report.csv')
