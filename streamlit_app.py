@@ -47,10 +47,8 @@ st.markdown("""
 # 2. HEADER BRANDIZZATO
 col_title = st.columns([1,2])
 with col_logo:
-    try:
-        st.image("logo.png", width=60)
-    except:
-        st.write("📈")
+    st.image("logo.png", width=60)
+    
 
 with col_title:
     st.markdown('<span class="brand-text">RGandja</span>', unsafe_allow_html=True)
