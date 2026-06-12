@@ -138,7 +138,7 @@ else:
         locations="Country Code", 
         color="GDP", 
         hover_name="Country Name", 
-        color_continuous_scale=px.colors.sequential.Goldred,
+        color_continuous_scale="YlOrRd",  # ✅ NUOVO
         template="plotly_dark"
     )
     fig_map.update_layout(height=400, margin={"r":0,"t":0,"l":0,"b":0})
