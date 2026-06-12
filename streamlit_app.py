@@ -5,7 +5,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from pathlib import Path
 from sklearn.linear_model import LinearRegression
-from streamlit import autorefresh as st_autorefresh
 
 # --- 0. CONFIGURAZIONE FILE ---
 DATA_FILENAME = "data/gdp_data.csv"  # ✅ Percorso CORRETTO!
