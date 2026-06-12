@@ -118,8 +118,9 @@ with st.sidebar:
     focus_country = st.selectbox(
     "Seleziona il Paese Focus",
     available_countries,
-    index=0
-    )
+    index=available_countries.index("ITA") if "ITA" in available_countries else 0
+   )
+
 
     st.divider()
 
@@ -184,10 +185,10 @@ else:
     st.subheader("💡 Insights Strategici")
     c1, c2 = st.columns(2)
     with c1:
-     focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
-    if len(focus_data) > 1:
-        total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
-        st.metric(f"Focus {focus_country}", f"{total_growth:+.1f}%", "Crescita nel periodo")
+        focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
+        if len(focus_data) > 1:
+            total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
+            st.metric(f"Focus {focus_country}", f"{total_growth:+.1f}%", "Crescita nel periodo")
 
     with c2:
         if not filtered_df.empty:
