@@ -216,7 +216,7 @@ else:
                 fig_pred.add_trace(go.Scatter(x=c_full['Year'], y=y, name=f"{country} (Storico)"))
                 # Linea Futura (Tratteggiata)
                 fig_pred.add_trace(go.Scatter(
-                    x=future.flatten(), 
+                    x=[int(year) for year in future.flatten()],
                     y=preds, 
                     name=f"{country} (Forecasting)", 
                     line=dict(dash='dash')
