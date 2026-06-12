@@ -45,7 +45,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 2. HEADER BRANDIZZATO
-col_logo,col_title = st.columns([1,2])
+col_logo.png , col_title = st.columns([1,2])
 with col_logo:
     try:
         st.image("logo.png", width=60)
