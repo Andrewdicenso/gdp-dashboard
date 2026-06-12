@@ -57,7 +57,10 @@ with col_title:
 @st.cache_data
 def get_gdp_data():
     """Carica e pulisce i dati dal file CSV locale"""
-    DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
+    try:
+    st.image("logo.png", width=80)
+except:
+    st.write("📈")
     raw_gdp_df = pd.read_csv(DATA_FILENAME)
     # Trasformiamo le colonne degli anni in righe (Pivot)
     gdp_df = raw_gdp_df.melt(
