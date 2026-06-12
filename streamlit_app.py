@@ -65,11 +65,25 @@ gdp_df = get_gdp_data()
 gdp_df = detect_anomalies(gdp_df)
 
 # --- 4. SIDEBAR ---
+# --- 4. SIDEBAR ---
 with st.sidebar:
+    # --- AGGIUNTA LOGO BRAND ---
+    try:
+        st.image("logo.png", width=150) # Mostra il tuo logo in alto nella sidebar
+    except:
+        pass 
+    
+    st.title("RGandja") # Il tuo brand
+    st.caption("Strategic Economic Analysis")
+    st.divider()
+    
+    # --- TUOI CONTROLLI ORIGINALI ---
     st.title("⚙️ Control Panel")
     from_year, to_year = st.slider('Timeline', 1960, 2022, [2000, 2022])
     countries = sorted(gdp_df['Country Code'].unique())
     selected_countries = st.multiselect('Target Countries', countries, ['ITA', 'USA', 'DEU', 'FRA'])
+    
+    # (Il resto del codice della sidebar con il tasto download continua qui...)
     
     st.divider()
     csv_data = gdp_df.to_csv(index=False).encode('utf-8')
