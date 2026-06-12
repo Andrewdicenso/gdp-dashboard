@@ -4,6 +4,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from pathlib import Path
+from sklearn.linear_model import LinearRegression
 
 # --- 1. CONFIGURAZIONE E BRANDING ---
 st.set_page_config(layout="wide", page_title="Executive GDP Intelligence", page_icon=':chart_with_upwards_trend:')
@@ -14,6 +15,9 @@ st.markdown("""
     h1, h2, h3 { font-family: 'Playfair Display', serif; color: #E3B341; }
     div[data-testid="stMetric"] { background-color: #1C2128; border: 1px solid #30363D; padding: 15px; border-radius: 10px; }
     .stSlider > div > div > div > div { background-color: #E3B341 !important; }
+    /* Nascondi menu Streamlit per look professionale */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
 
@@ -22,12 +26,12 @@ st.markdown("""
 def get_gdp_data():
     DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
     raw_gdp_df = pd.read_csv(DATA_FILENAME)
-    # Pivot dei dati per avere Year e GDP come colonne
+    # Pivot dei dati per avere Year e GDP come colonne (include Country Name per la mappa)
     gdp_df = raw_gdp_df.melt(['Country Code', 'Country Name'], [str(x) for x in range(1960, 2023)], 'Year', 'GDP')
     gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
     return gdp_df
 
-# --- 3. ANALIZZATORE DI ANOMALIE (La parte "Intelligente") ---
+# --- 3. ANALIZZATORE DI ANOMALIE ---
 def detect_anomalies(df, threshold=2.5):
     df = df.sort_values(['Country Code', 'Year'])
     df['GDP_Change'] = df.groupby('Country Code')['GDP'].pct_change()
@@ -71,10 +75,9 @@ else:
     st.divider()
 
     # B. GRAFICO TREND + ANOMALIE
-    st.subheader("📈 Traiettoria Economica & Forecasting")
+    st.subheader("📈 Traiettoria Economica & Eventi Critici")
     fig_line = px.line(filtered_df, x="Year", y="GDP", color="Country Code", template="plotly_dark")
     
-    # Aggiunta punti anomalia
     anomalies = filtered_df[filtered_df['Is_Anomaly'] == True]
     if not anomalies.empty:
         fig_line.add_trace(go.Scatter(x=anomalies['Year'], y=anomalies['GDP'], mode='markers',
@@ -86,7 +89,6 @@ else:
     st.subheader("💡 Executive Summary")
     c1, c2 = st.columns(2)
     with c1:
-        # Analisi Italia (se presente)
         if 'ITA' in selected_countries:
             ita_data = filtered_df[filtered_df['Country Code'] == 'ITA']
             if len(ita_data) > 1:
@@ -94,4 +96,36 @@ else:
                 st.metric("Performance Italia", f"{growth:+.1f}%", "Crescita nel periodo")
     with c2:
         top_c = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
-        st.info(f"**Insight:** Il leader attuale è **{top_c}**. Sono stati rilevati {len(anomalies)} eventi di instabilità nel periodo.")** {top_country} detiene attualmente il PIL più alto nella tua selezione.")
+        st.info(f"**Insight:** Il leader attuale è **{top_c}**. Rilevati {len(anomalies)} eventi di instabilità nel periodo.")
+
+    # D. ANALISI PREDITTIVA (Outlook 5 anni)
+    st.divider()
+    st.subheader("🔮 Predictive Analysis: 5-Year Outlook")
+    
+    cp1, cp2 = st.columns([2, 1])
+    with cp1:
+        fig_pred = go.Figure()
+        for country in selected_countries:
+            country_full = gdp_df[gdp_df['Country Code'] == country].dropna()
+            X = country_full['Year'].values.reshape(-1, 1)
+            y = country_full['GDP'].values
+            
+            # Modello di Regressione
+            model = LinearRegression().fit(X, y)
+            future_years = np.array(range(2023, 2028)).reshape(-1, 1)
+            predictions = model.predict(future_years)
+            
+            # Linea Storica
+            fig_pred.add_trace(go.Scatter(x=country_full['Year'], y=y, name=f"{country} (Storico)"))
+            # Linea Futura
+            fig_pred.add_trace(go.Scatter(x=future_years.flatten(), y=predictions, 
+                                          name=f"{country} (Forecasting)", 
+                                          line=dict(dash='dash')))
+        
+        fig_pred.update_layout(template="plotly_dark", height=450)
+        st.plotly_chart(fig_pred, use_container_width=True)
+        
+    with cp2:
+        st.write("**Intelligence Outlook**")
+        st.caption("Proiezione statistica basata sul trend storico decennale.")
+        st.info("💡 Questo modello stima la traiettoria strutturale. Non include variabili di shock esterni non prevedibili dal trend lineare.")
