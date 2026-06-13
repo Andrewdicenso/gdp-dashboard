@@ -1,6 +1,4 @@
 import streamlit as st
-import base64
-import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -46,26 +44,17 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# 2. HEADER BRANDIZZATO
+col_title = st.columns([1,2])
+with col_logo:
+    try:
+        st.image("logo.png", width=60)
+    except:
+        st.write("📈")
 
-# Funzione per convertire l'immagine in base64 (necessaria per HTML st.markdown)
-def get_base64_img(path):
-    with open(path, "rb") as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
+with col_title:
+    st.markdown('<span class="brand-text">RGandja</span>', unsafe_allow_html=True)
 
-logo_base64 = get_base64_img("logo.png")
-
-st.markdown(
-    f"""
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <img src="data:image/png;base64,{logo_base64}" width="60" style="object-fit: contain;">
-        <span style="font-size: 2.5rem; font-weight: bold; line-height: 1;">
-            RGandja
-        </span>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 # --- 3. DATA ENGINE (Logica Originale + Ottimizzazione) ---
 @st.cache_data
 def get_gdp_data():
