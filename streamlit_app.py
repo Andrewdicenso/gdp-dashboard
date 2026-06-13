@@ -96,7 +96,7 @@ gdp_df = detect_anomalies(gdp_df)
 # --- 5. SIDEBAR (Control Panel Brandizzato) ---
 with st.sidebar:
     try:
-        st.image("logo.png", width=100)
+        st.image("logo.png", width=50)
     except:
         pass
     st.title("RGandja")
