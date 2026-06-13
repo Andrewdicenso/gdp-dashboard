@@ -45,12 +45,32 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 2. HEADER BRANDIZZATO
-col_logo, col_title = st.columns([1,2])
-with col_logo:
-    st.image("logo.png", width=60)
-with col_title:
-    st.markdown('<span class="brand-text">RGandja</span>', unsafe_allow_html=True)
+import streamlit as st
 
+# Crea le colonne con allineamento verticale al centro
+col_logo, col_title = st.columns([1, 8], vertical_alignment="center")
+
+with col_logo:
+    # 'use_container_width=False' previene lo stretching indesiderato
+    st.image("logo.png", width=60)
+
+with col_title:
+    # Usiamo uno stile per assicurarci che il testo sia ben allineato
+    st.markdown(
+        """
+        <style>
+            .brand-text {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin: 0;
+                line-height: 1;
+                vertical-align: middle;
+            }
+        </style>
+        <span class="brand-text">RGandja</span>
+        """, 
+        unsafe_allow_html=True
+    )
 # --- 3. DATA ENGINE (Logica Originale + Ottimizzazione) ---
 @st.cache_data
 def get_gdp_data():
