@@ -1,4 +1,6 @@
 import streamlit as st
+import base64
+import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -44,33 +46,26 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 2. HEADER BRANDIZZATO
-import streamlit as st
 
-# Crea le colonne con allineamento verticale al centro
-col_logo, col_title = st.columns([1, 8], vertical_alignment="center")
+# Funzione per convertire l'immagine in base64 (necessaria per HTML st.markdown)
+def get_base64_img(path):
+    with open(path, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
 
-with col_logo:
-    # 'use_container_width=False' previene lo stretching indesiderato
-    st.image("logo.png", width=60)
+logo_base64 = get_base64_img("logo.png")
 
-with col_title:
-    # Usiamo uno stile per assicurarci che il testo sia ben allineato
-    st.markdown(
-        """
-        <style>
-            .brand-text {
-                font-size: 2.5rem;
-                font-weight: 700;
-                margin: 0;
-                line-height: 1;
-                vertical-align: middle;
-            }
-        </style>
-        <span class="brand-text">RGandja</span>
-        """, 
-        unsafe_allow_html=True
-    )
+st.markdown(
+    f"""
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <img src="data:image/png;base64,{logo_base64}" width="60" style="object-fit: contain;">
+        <span style="font-size: 2.5rem; font-weight: bold; line-height: 1;">
+            RGandja
+        </span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 # --- 3. DATA ENGINE (Logica Originale + Ottimizzazione) ---
 @st.cache_data
 def get_gdp_data():
