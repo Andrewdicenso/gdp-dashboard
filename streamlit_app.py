@@ -48,7 +48,7 @@ st.markdown("""
 col_logo, col_title = st.columns([1,2])
 with col_logo:
     try:
-        st.image("logo.png", width=60)
+        st.image("logo.png", width=80)
     except:
         st.write("📈")
 
