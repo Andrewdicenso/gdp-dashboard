@@ -7,31 +7,30 @@ from pathlib import Path
 from sklearn.linear_model import LinearRegression
 
 # --- 0. CONFIGURAZIONE FILE ---
-DATA_FILENAME = "data/gdp_data.csv"  # ✅ Percorso CORRETTO!
+DATA_FILENAME = "data/gdp_data.csv"
 
 # --- 1. CONFIGURAZIONE E BRANDING ---
 st.set_page_config(layout="wide", page_title="RGandja", page_icon='📈')
 
-# --- AGGIUNTA PER ACCESSIBILITÀ (Zoom e Landmark) ---
+# --- FIX ACCESSIBILITÀ (Sblocca Zoom e imposta Main Landmark) ---
 st.components.v1.html(
     """
     <script>
-        // Funzione per applicare le correzioni al documento principale (parent)
         function applyA11yFixes() {
-            // 1. Rimuove il blocco dello zoom (user-scalable=no)
+            // 1. Sblocca la lente di ingrandimento (Zoom)
             var meta = window.parent.document.querySelector('meta[name="viewport"]');
             if (meta) {
                 meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
             }
             
-            // 2. Identifica l'area principale per gli screen reader
+            // 2. Imposta il punto di riferimento principale (Main Landmark)
             var mainContent = window.parent.document.querySelector('section.main');
             if (mainContent) {
                 mainContent.setAttribute('role', 'main');
                 mainContent.setAttribute('aria-label', 'Dashboard Economica RGandja');
             }
         }
-        // Esegue la funzione dopo un breve delay per attendere il caricamento di Streamlit
+        // Esegue il fix dopo il caricamento della pagina
         setTimeout(applyA11yFixes, 1000);
     </script>
     """,
@@ -40,9 +39,9 @@ st.components.v1.html(
 
 st.markdown("""
     <style>
-    /* Sfondo e Testi */
+    /* Sfondo e Testi - Migliorato contrasto oro per accessibilità */
     .stApp { background-color: #0E1117; color: #FFFFFF; }
-    h1, h2, h3 { font-family: 'Playfair Display', serif; color: #E3B341; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; color: #F0BC3E; }
     
     /* Box Metriche */
     div[data-testid="stMetric"] { 
@@ -53,25 +52,25 @@ st.markdown("""
     }
     
     /* Personalizzazione Slider */
-    .stSlider > div > div > div > div { background-color: #E3B341 !important; }
+    .stSlider > div > div > div > div { background-color: #F0BC3E !important; }
     
     /* Header Brand */
     .brand-text { 
         font-size: 2.5rem; 
         font-weight: bold; 
         font-family: 'Playfair Display', serif; 
-        color: #E3B341; 
+        color: #F0BC3E; 
         margin-left: 15px; 
     }
     
-    /* Pulizia Interfaccia */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    /* Pulizia Interfaccia (Accessibile) */
+    #MainMenu { display: none; }
+    footer { display: none; }
     </style>
 """, unsafe_allow_html=True)
 
 # 2. HEADER BRANDIZZATO
-col_logo, col_title = st.columns([1,2])
+col_logo, col_title = st.columns([1, 2])
 with col_logo:
     try:
         st.image("logo.png", width=80)
@@ -142,16 +141,20 @@ with st.sidebar:
 
     st.subheader("🎯 Focus Paese")
     focus_country = st.selectbox(
-    "Seleziona il Paese Focus",
-    available_countries,
-    index=available_countries.index("ITA") if "ITA" in available_countries else 0
+        "Seleziona il Paese Focus",
+        available_countries,
+        index=available_countries.index("ITA") if "ITA" in available_countries else 0
     )
 
     st.divider()
 
-    # Esportazione Dati (Funzionalità Avanzata)
-    csv_report = gdp_df.to_csv(index=False).encode('utf-8')
-    st.download_button("📥 Scarica Report Dati (CSV)", data=csv_report, file_name='rgandja_gdp_report.csv')
+    # Esportazione Dati (Ottimizzata: il CSV viene generato SOLO quando l'utente clicca il bottone)
+    st.download_button(
+        label="📥 Scarica Report Dati (CSV)",
+        data=gdp_df.to_csv(index=False).encode('utf-8'),
+        file_name='rgandja_gdp_report.csv',
+        mime='text/csv'
+    )
 
 # --- 6. DASHBOARD INTERATTIVA ---
 if not selected_countries:
@@ -164,17 +167,18 @@ else:
         (gdp_df['Year'] <= to_year)
     ].dropna()
 
-    # A. MAPPA MONDIALE (Effetto Wow)
+# A. MAPPA MONDIALE (Effetto Wow)
     col1, col2 = st.columns([1, 3])
     with col2:
         st.subheader("Global Economic Intelligence")
+    
     map_year_data = gdp_df[gdp_df['Year'] == to_year].dropna()
     fig_map = px.choropleth(
         map_year_data, 
         locations="Country Code", 
         color="GDP", 
         hover_name="Country Name", 
-        color_continuous_scale="YlOrRd",  # ✅ NUOVO
+        color_continuous_scale="YlOrRd",
         template="plotly_dark"
     )
     fig_map.update_layout(height=400, margin={"r":0,"t":0,"l":0,"b":0})
@@ -182,7 +186,7 @@ else:
 
     st.divider()
 
-    # 🔄 Auto-refresh ogni 60 secondi (senza moduli esterni)
+    # 🔄 Auto-refresh ogni 60 secondi (Fix tag HTML)
     st.markdown("""
     <script>
         setTimeout(function(){
@@ -190,7 +194,6 @@ else:
         }, 60000);
     </script>
     """, unsafe_allow_html=True)
-
 
     # B. ANALISI STORICA E SHOCK (Grafico Lineare)
     st.subheader("📈 Analisi Trend & Eventi Critici")
@@ -222,7 +225,7 @@ else:
             leader = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
             st.info(f"**Market Leader:** Nel {to_year}, il PIL più elevato è di **{leader}**.")
 
-    # D. PREVISIONI FUTURE (Regressione Lineare)
+    # D. PREVISIONI FUTURE (Regressione Lineare aggiornata al 2026)
     st.divider()
     st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
     
@@ -237,7 +240,8 @@ else:
                 
                 # Machine Learning Model
                 model = LinearRegression().fit(X, y)
-                future = np.array(range(2023, 2028)).reshape(-1, 1)
+                # Calcola i prossimi 5 anni (dal 2026 al 2031)
+                future = np.array(range(2026, 2031)).reshape(-1, 1)
                 preds = model.predict(future)
                 
                 # Linea Storica
@@ -257,3 +261,9 @@ else:
         st.write("**Metodologia Predittiva**")
         st.caption("Proiezione calcolata tramite regressione lineare sui dati storici.")
         st.info("💡 Questo modulo stima la crescita potenziale basata sul trend strutturale, escludendo variabili geopolitiche imprevedibili.")
+
+    # --- FOOTER TECNICO (Estratto dalle colonne per stare a fondo pagina) ---
+    st.divider()
+    st.caption("© 2026 RGandja | Data Intelligence Unit")
+
+# --- FINE DEL CODICE ---
