@@ -83,24 +83,28 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. HEADER BRANDIZZATO ---
-# Usiamo colonne con proporzioni specifiche per tenere logo e testo vicini
-col_logo, col_title = st.columns([0.15, 0.85]) 
+# --- 2. HEADER BRANDIZZATO (Stile Compatto rgandja.com) ---
+import base64
 
-with col_logo:
-    try:
-        # Assicurati che logo.png sia nella stessa cartella dello script
-        st.image("logo.png", width=60)
-    except:
-        st.write("📈")
+def get_base64_img(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
 
-with col_title:
-    # Usiamo un margine superiore negativo per allineare il testo al centro del logo
-    st.markdown("""
-        <div style='display: flex; align-items: center; height: 60px;'>
-            <span class="brand-text" style='margin: 0; padding-left: 10px;'>RGandja</span>
-        </div>
-    """, unsafe_allow_html=True)
+try:
+    # Codifichiamo l'immagine per caricarla direttamente nel CSS e rimuovere i ritardi
+    img_base64 = get_base64_img("logo.png")
+    logo_html = f'<img src="data:image/png;base64,{img_base64}" width="50" style="vertical-align: middle;">'
+except:
+    logo_html = '<span style="font-size: 50px;">📈</span>'
+
+# Header unico con Flexbox per eliminare lo spazio delle colonne di Streamlit
+st.markdown(f"""
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+        {logo_html}
+        <span class="brand-text" style="margin: 0; padding: 0; line-height: 1;">RGandja</span>
+    </div>
+""", unsafe_allow_html=True)
+
 # --- 3. DATA ENGINE (Logica Originale + Ottimizzazione) ---
 @st.cache_data
 def get_gdp_data():
