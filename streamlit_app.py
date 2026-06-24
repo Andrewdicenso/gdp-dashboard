@@ -83,18 +83,24 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 2. HEADER BRANDIZZATO
-col_logo, col_title = st.columns([1, 2])
+# --- 2. HEADER BRANDIZZATO ---
+# Usiamo colonne con proporzioni specifiche per tenere logo e testo vicini
+col_logo, col_title = st.columns([0.15, 0.85]) 
+
 with col_logo:
     try:
-        # Aggiunto help per l'accessibilità (testo alternativo)
-        st.image("logo.png", width=80, help="Logo RGandja - Intelligence Unit")
+        # Assicurati che logo.png sia nella stessa cartella dello script
+        st.image("logo.png", width=60)
     except:
         st.write("📈")
 
 with col_title:
-    st.markdown('<span class="brand-text">RGandja</span>', unsafe_allow_html=True)
-
+    # Usiamo un margine superiore negativo per allineare il testo al centro del logo
+    st.markdown("""
+        <div style='display: flex; align-items: center; height: 60px;'>
+            <span class="brand-text" style='margin: 0; padding-left: 10px;'>RGandja</span>
+        </div>
+    """, unsafe_allow_html=True)
 # --- 3. DATA ENGINE (Logica Originale + Ottimizzazione) ---
 @st.cache_data
 def get_gdp_data():
