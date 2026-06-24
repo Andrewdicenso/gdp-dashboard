@@ -10,7 +10,16 @@ from sklearn.linear_model import LinearRegression
 DATA_FILENAME = "data/gdp_data.csv"
 
 # --- 1. CONFIGURAZIONE E BRANDING ---
-st.set_page_config(layout="wide", page_title="RGandja", page_icon='📈')
+st.set_page_config(
+    layout="wide", 
+    page_title="RGandja | Global GDP Intelligence", 
+    page_icon='📈',
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://rgandja.com',
+        'About': "# RGandja Economic Dashboard\nAnalisi predittiva e monitoraggio del PIL globale."
+    }
+)
 
 # --- FIX ACCESSIBILITÀ (Sblocca Zoom e imposta Main Landmark) ---
 st.components.v1.html(
@@ -39,11 +48,11 @@ st.components.v1.html(
 
 st.markdown("""
     <style>
-    /* Sfondo e Testi - Migliorato contrasto oro per accessibilità */
+    /* 1. Sfondo e Testi - Mantieni il tuo stile unico */
     .stApp { background-color: #0E1117; color: #FFFFFF; }
     h1, h2, h3 { font-family: 'Playfair Display', serif; color: #F0BC3E; }
     
-    /* Box Metriche */
+    /* 2. Box Metriche */
     div[data-testid="stMetric"] { 
         background-color: #1C2128; 
         border: 1px solid #30363D; 
@@ -51,10 +60,10 @@ st.markdown("""
         border-radius: 10px; 
     }
     
-    /* Personalizzazione Slider */
+    /* 3. Personalizzazione Slider */
     .stSlider > div > div > div > div { background-color: #F0BC3E !important; }
     
-    /* Header Brand */
+    /* 4. Header Brand */
     .brand-text { 
         font-size: 2.5rem; 
         font-weight: bold; 
@@ -63,9 +72,15 @@ st.markdown("""
         margin-left: 15px; 
     }
     
-    /* Pulizia Interfaccia (Accessibile) */
+    /* 5. Pulizia Interfaccia (Migliora SEO e Accessibilità) */
     #MainMenu { display: none; }
     footer { display: none; }
+
+    /* 6. OTTIMIZZAZIONE SPAZI (Il pezzo nuovo) */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -73,7 +88,8 @@ st.markdown("""
 col_logo, col_title = st.columns([1, 2])
 with col_logo:
     try:
-        st.image("logo.png", width=80)
+        # Aggiunto help per l'accessibilità (testo alternativo)
+        st.image("logo.png", width=80, help="Logo RGandja - Intelligence Unit")
     except:
         st.write("📈")
 
@@ -121,7 +137,8 @@ gdp_df = detect_anomalies(gdp_df)
 # --- 5. SIDEBAR (Control Panel Brandizzato) ---
 with st.sidebar:
     try:
-        st.image("logo.png", width=50)
+        # Aggiunto help per accessibilità
+        st.image("logo.png", width=50, help="Logo RGandja")
     except:
         pass
     st.title("RGandja")
@@ -148,14 +165,20 @@ with st.sidebar:
 
     st.divider()
 
-    # Esportazione Dati (Ottimizzata: il CSV viene generato SOLO quando l'utente clicca il bottone)
+    # Esportazione Dati (Ottimizzata: il CSV viene generato SOLO al clic)
+    @st.cache_data
+    def convert_df(df):
+        return df.to_csv(index=False).encode('utf-8')
+
+    csv_data = convert_df(gdp_df)
+
     st.download_button(
         label="📥 Scarica Report Dati (CSV)",
-        data=gdp_df.to_csv(index=False).encode('utf-8'),
+        data=csv_data,
         file_name='rgandja_gdp_report.csv',
-        mime='text/csv'
+        mime='text/csv',
+        help="Clicca per scaricare i dati completi in formato CSV"
     )
-
 # --- 6. DASHBOARD INTERATTIVA ---
 if not selected_countries:
     st.warning("⚠️ Seleziona almeno un paese per attivare l'analisi.")
