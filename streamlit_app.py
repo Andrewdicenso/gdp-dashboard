@@ -200,7 +200,7 @@ else:
     # SOTTOTITOLO CENTRALIZZATO
     st.markdown("<h2 style='text-align: center;'>Global Economic Intelligence</h2>", unsafe_allow_html=True)
     
-    # --- A. MAPPA MONDIALE (Inserita correttamente dentro l'else) ---
+    # --- A. MAPPA MONDIALE ---
     map_year_data = gdp_df[gdp_df['Year'] == to_year].dropna()
 
     fig_map = px.choropleth(
@@ -251,7 +251,7 @@ else:
             name='Shock Economico'
         ))
     st.plotly_chart(fig_line, use_container_width=True)
-    
+
     # C. EXECUTIVE INSIGHTS (Metriche Intelligenti)
     st.subheader("💡 Insights Strategici")
     c1, c2 = st.columns(2)
