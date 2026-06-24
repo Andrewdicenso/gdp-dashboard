@@ -247,42 +247,50 @@ else:
         ))
     st.plotly_chart(fig_line, use_container_width=True)
 
-    # C. EXECUTIVE INSIGHTS (Metriche Intelligenti)
-    st.subheader("💡 Insights Strategici")
-    c1, c2 = st.columns(2)
-    with c1:
-        focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
-        if len(focus_data) > 1:
-            total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
-            st.metric(f"Focus {focus_country}", f"{total_growth:+.1f}%", "Crescita nel periodo")
+# --- C. MERCATO AZIONARIO REAL TIME ---
+st.subheader("📊 Mercato Azionario R.T.")
+try:
+    import yfinance as yf
+    @st.cache_data(ttl=300)
+    def get_market_data():
+        tickers = ["AAPL", "GOOGL", "MSFT", "TSLA", "EURUSD=X", "BTC-USD"]
+        data = []
+        for t in tickers:
+            s = yf.Ticker(t)
+            # Prezzo e variazione semplificati per stabilità
+            hist = s.history(period="2d")
+            if len(hist) > 1:
+                last_p = hist['Close'].iloc[-1]
+                change = ((last_p - hist['Close'].iloc[0]) / hist['Close'].iloc[0]) * 100
+                data.append({"Asset": t, "Prezzo": f"{last_p:.2f}", "Var %": change})
+        return pd.DataFrame(data)
 
-    with c2:
-        if not filtered_df.empty:
-            leader = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
-            st.info(f"**Market Leader:** Nel {to_year}, il PIL più elevato è di **{leader}**.")
+    m_df = get_market_data()
+    # Visualizzazione orizzontale a colonne per richiamare i board finanziari
+    cols = st.columns(len(m_df))
+    for i, row in m_df.iterrows():
+        color = "normal" if row['Var %'] > 0 else "inverse"
+        cols[i].metric(row['Asset'], row['Prezzo'], f"{row['Var %']:+.2f}%", delta_color=color)
+except:
+    st.info("Dati di mercato momentaneamente non disponibili")
 
-    # D. PREVISIONI FUTURE (Regressione Lineare aggiornata al 2026)
+    # --- D. PREVISIONI E INSIGHTS (Layout Ottimizzato) ---
     st.divider()
-    st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
-    
     cp1, cp2 = st.columns([2, 1])
+
     with cp1:
+        st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
         fig_pred = go.Figure()
         for country in selected_countries:
             c_full = gdp_df[gdp_df['Country Code'] == country].dropna()
             if len(c_full) > 1:
                 X = c_full['Year'].values.reshape(-1, 1)
                 y = c_full['GDP'].values
-                
-                # Machine Learning Model
                 model = LinearRegression().fit(X, y)
-                # Calcola i prossimi 5 anni (dal 2026 al 2031)
                 future = np.array(range(2026, 2031)).reshape(-1, 1)
                 preds = model.predict(future)
                 
-                # Linea Storica
                 fig_pred.add_trace(go.Scatter(x=c_full['Year'], y=y, name=f"{country} (Storico)"))
-                # Linea Futura (Tratteggiata)
                 fig_pred.add_trace(go.Scatter(
                     x=[int(year) for year in future.flatten()],
                     y=preds, 
@@ -290,14 +298,33 @@ else:
                     line=dict(dash='dash')
                 ))
             
-        fig_pred.update_layout(template="plotly_dark", height=450)
+        fig_pred.update_layout(template="plotly_dark", height=450, margin=dict(l=0, r=0, t=20, b=0))
         st.plotly_chart(fig_pred, use_container_width=True)
         
-    with cp2:
-        st.write("**Metodologia Predittiva**")
-        st.caption("Proiezione calcolata tramite regressione lineare sui dati storici.")
-        st.info("💡 Questo modulo stima la crescita potenziale basata sul trend strutturale, escludendo variabili geopolitiche imprevedibili.")
+        # SPIEGAZIONE ESTESA SOTTO IL GRAFICO (Accessibile e Sinuosa)
+        st.markdown("""
+            <div style="text-align: justify; color: #808495; font-size: 0.95rem; margin-top: 15px; border-left: 2px solid #F0BC3E; padding-left: 15px;">
+                <strong>Metodologia Predittiva:</strong> Proiezione calcolata tramite regressione lineare sui dati storici. 
+                Questo modulo stima la crescita potenziale basata sul trend strutturale, escludendo variabili geopolitiche 
+                imprevedibili che potrebbero alterare il percorso economico nel breve termine.
+            </div>
+        """, unsafe_allow_html=True)
 
+    with cp2:
+        st.subheader("💡 Focus & Leadership")
+        # Inserimento del blocco FOCUS spostato
+        focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
+        if len(focus_data) > 1:
+            total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
+            st.metric(f"Focus {focus_country}", f"{total_growth:+.1f}%", "Crescita nel periodo")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Inserimento del blocco MARKET LEADER spostato
+        if not filtered_df.empty:
+            leader = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
+            st.info(f"**Market Leader:** Nel {to_year}, il PIL più elevato è di **{leader}**.")
+            
     # --- FOOTER TECNICO (Estratto dalle colonne per stare a fondo pagina) ---
     st.divider()
     st.caption("© 2026 RGandja | Data Intelligence Unit")
