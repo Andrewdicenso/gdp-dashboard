@@ -47,7 +47,7 @@ st.components.v1.html(
 
 st.markdown("""
     <style>
-    /* 1. Sfondo e Testi - Mantieni il tuo stile unico */
+    /* 1. Sfondo e Testi */
     .stApp { background-color: #0E1117; color: #FFFFFF; }
     h1, h2, h3 { font-family: 'Playfair Display', serif; color: #F0BC3E; }
     
@@ -71,19 +71,25 @@ st.markdown("""
         margin-left: 15px; 
     }
     
-    /* 5. Pulizia Interfaccia (Migliora SEO e Accessibilità) */
+    /* 5. Pulizia Interfaccia */
     #MainMenu { display: none; }
     footer { display: none; }
 
-    /* 6. OTTIMIZZAZIONE SPAZI (Il pezzo nuovo) */
-    .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
+    /* 6. Animazione Dorata per la Mappa */
+    @keyframes gold-glow {
+        0% { filter: drop-shadow(0 0 2px rgba(240, 188, 62, 0.2)); }
+        50% { filter: drop-shadow(0 0 15px rgba(240, 188, 62, 0.6)); }
+        100% { filter: drop-shadow(0 0 2px rgba(240, 188, 62, 0.2)); }
+    }
+
+    /* Applica l'animazione a tutti i grafici (inclusa la mappa) */
+    div[data-testid="stPlotlyChart"] {
+        animation: gold-glow 4s infinite ease-in-out;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. HEADER BRANDIZZATO (Stile Compatto rgandja.com) ---
+# --- 2. HEADER BRANDIZZATO (Centrato) ---
 import base64
 
 def get_base64_img(path):
@@ -91,15 +97,14 @@ def get_base64_img(path):
         return base64.b64encode(f.read()).decode()
 
 try:
-    # Codifichiamo l'immagine per caricarla direttamente nel CSS e rimuovere i ritardi
     img_base64 = get_base64_img("logo.png")
-    logo_html = f'<img src="data:image/png;base64,{img_base64}" width="50" style="vertical-align: middle;">'
+    logo_html = f'<img src="data:image/png;base64,{img_base64}" width="60" style="vertical-align: middle;">'
 except:
     logo_html = '<span style="font-size: 50px;">📈</span>'
 
-# Header unico con Flexbox per eliminare lo spazio delle colonne di Streamlit
+# Contenitore con justify-content: center per centrare tutto
 st.markdown(f"""
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px;">
         {logo_html}
         <span class="brand-text" style="margin: 0; padding: 0; line-height: 1;">RGandja</span>
     </div>
@@ -188,7 +193,7 @@ with st.sidebar:
         mime='text/csv',
         help="Clicca per scaricare i dati completi in formato CSV"
     )
-# --- 6. DASHBOARD INTERATTIVA ---
+# --- 6. DASHBOARD INTERATTIVA (Mappa Centrata) ---
 if not selected_countries:
     st.warning("⚠️ Seleziona almeno un paese per attivare l'analisi.")
 else:
@@ -198,6 +203,11 @@ else:
         (gdp_df['Year'] >= from_year) &
         (gdp_df['Year'] <= to_year)
     ].dropna()
+
+    # SOTTOTITOLO CENTRALIZZATO
+    st.markdown("<h2 style='text-align: center;'>Global Economic Intelligence</h2>", unsafe_allow_html=True)
+    
+    map_year_data = gdp_df[gdp_df['Year'] == to_year].dropna()
 
 # A. MAPPA MONDIALE (Effetto Wow)
     col1, col2 = st.columns([1, 3])
