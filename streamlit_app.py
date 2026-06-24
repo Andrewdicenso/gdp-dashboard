@@ -231,15 +231,6 @@ else:
     st.plotly_chart(fig_map, use_container_width=True)
     st.divider()
 
-    # 🔄 Auto-refresh ogni 60 secondi (Mantenuto allineato dentro l'else)
-    st.markdown("""
-    <script>
-        setTimeout(function(){
-            window.location.reload();
-        }, 60000);
-    </script>
-    """, unsafe_allow_html=True)
-
     # B. ANALISI STORICA E SHOCK (Grafico Lineare - Allineato dentro l'else)
     st.subheader("📈 Analisi Trend & Eventi Critici")
     fig_line = px.line(filtered_df, x="Year", y="GDP", color="Country Code", template="plotly_dark")
