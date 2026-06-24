@@ -47,7 +47,8 @@ st.components.v1.html(
 
 st.markdown("""
     <style>
-    /* 1. Sfondo e Testi */
+    /* 1. OTTIMIZZAZIONE SPAZI (Rimuove lo stacco in alto) */
+    .block-container { padding-top: 1rem !important; padding-bottom: 1rem !important; }
     .stApp { background-color: #0E1117; color: #FFFFFF; }
     h1, h2, h3 { font-family: 'Playfair Display', serif; color: #F0BC3E; }
     
@@ -68,23 +69,28 @@ st.markdown("""
         font-weight: bold; 
         font-family: 'Playfair Display', serif; 
         color: #F0BC3E; 
-        margin-left: 15px; 
     }
     
     /* 5. Pulizia Interfaccia */
     #MainMenu { display: none; }
     footer { display: none; }
 
-    /* 6. Animazione Dorata per la Mappa */
-    @keyframes gold-glow {
-        0% { filter: drop-shadow(0 0 2px rgba(240, 188, 62, 0.2)); }
-        50% { filter: drop-shadow(0 0 15px rgba(240, 188, 62, 0.6)); }
-        100% { filter: drop-shadow(0 0 2px rgba(240, 188, 62, 0.2)); }
+    /* 6. ANIMAZIONE SINUOSA (Glow dorato intermittente) */
+    @keyframes gold-pulse {
+        0% { filter: drop-shadow(0 0 5px rgba(240, 188, 62, 0.2)); }
+        50% { filter: drop-shadow(0 0 20px rgba(240, 188, 62, 0.5)); }
+        100% { filter: drop-shadow(0 0 5px rgba(240, 188, 62, 0.2)); }
     }
 
-    /* Applica l'animazione a tutti i grafici (inclusa la mappa) */
+    /* Applica l'animazione e l'effetto al passaggio del mouse */
     div[data-testid="stPlotlyChart"] {
-        animation: gold-glow 4s infinite ease-in-out;
+        animation: gold-pulse 4s infinite ease-in-out;
+        transition: transform 0.3s ease, filter 0.3s ease;
+    }
+    
+    div[data-testid="stPlotlyChart"]:hover {
+        transform: scale(1.01);
+        filter: drop-shadow(0 0 25px rgba(240, 188, 62, 0.8));
     }
     </style>
 """, unsafe_allow_html=True)
