@@ -93,7 +93,6 @@ st.markdown("""
 # --- 2. HEADER BRANDIZZATO ---
 st.markdown(f"""
     <div class="brand-container">
-        {logo_html}
         <span class="brand-text">RGandja</span>
     </div>
 """, unsafe_allow_html=True)
