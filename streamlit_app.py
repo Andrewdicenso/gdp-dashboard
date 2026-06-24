@@ -90,20 +90,14 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. HEADER BRANDIZZATO ---
+py
+# --- 2. HEADER BRANDIZZATO (Unico e Centrato) ---
 st.markdown(f"""
-    <div class="brand-container">
-        <span class="brand-text">RGandja</span>
-    </div>
-""", unsafe_allow_html=True)
-
-st.markdown("<h2>Global Economic Intelligence</h2>", unsafe_allow_html=True)
-
-# Contenitore con justify-content: center per centrare tutto
-st.markdown(f"""
-    <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px;">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px; margin-bottom: 10px;">
+        {logo_html}
         <span class="brand-text" style="margin: 0; padding: 0; line-height: 1;">RGandja</span>
     </div>
+    <h2 style='text-align: center; margin-top: 0;'>Global Economic Intelligence</h2>
 """, unsafe_allow_html=True)
 
 # --- 3. DATA ENGINE (Logica Originale + Ottimizzazione) ---
