@@ -194,9 +194,6 @@ else:
         (gdp_df['Year'] >= from_year) &
         (gdp_df['Year'] <= to_year)
     ].dropna()
-
-    # SOTTOTITOLO CENTRALIZZATO
-    st.markdown("<h2 style='text-align: center;'>Global Economic Intelligence</h2>", unsafe_allow_html=True)
     
     # --- A. MAPPA MONDIALE ---
     map_year_data = gdp_df[gdp_df['Year'] == to_year].dropna()
