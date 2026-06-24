@@ -102,7 +102,6 @@ st.markdown("<h2>Global Economic Intelligence</h2>", unsafe_allow_html=True)
 # Contenitore con justify-content: center per centrare tutto
 st.markdown(f"""
     <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px;">
-        {logo_html}
         <span class="brand-text" style="margin: 0; padding: 0; line-height: 1;">RGandja</span>
     </div>
 """, unsafe_allow_html=True)
