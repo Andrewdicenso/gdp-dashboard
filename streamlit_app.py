@@ -90,7 +90,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-py
 # --- 2. HEADER BRANDIZZATO (Unico e Centrato) ---
 st.markdown(f"""
     <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px; margin-bottom: 10px;">
