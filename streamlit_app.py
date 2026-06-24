@@ -90,7 +90,23 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. HEADER BRANDIZZATO (Unico e Centrato) ---
+# --- CARICAMENTO LOGO (Aggiungi questo pezzo!) ---
+import base64
+
+def get_base64_img(path):
+    try:
+        with open(path, "rb") as f:
+            return base64.b64encode(f.read()).decode()
+    except:
+        return None
+
+img_b64 = get_base64_img("logo.png")
+if img_b64:
+    logo_html = f'<img src="data:image/png;base64,{img_b64}" width="60" style="vertical-align: middle;">'
+else:
+    logo_html = '<span style="font-size: 50px;">📈</span>'
+
+# --- 2. HEADER BRANDIZZATO (Ora funzionerà!) ---
 st.markdown(f"""
     <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px; margin-bottom: 10px;">
         {logo_html}
