@@ -47,66 +47,58 @@ st.components.v1.html(
 
 st.markdown("""
     <style>
-    /* 1. OTTIMIZZAZIONE SPAZI (Rimuove lo stacco in alto) */
-    .block-container { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+    /* Reset Layout per massima pulizia */
+    .block-container { padding-top: 2rem !important; max-width: 90% !important; }
     .stApp { background-color: #0E1117; color: #FFFFFF; }
-    h1, h2, h3 { font-family: 'Playfair Display', serif; color: #F0BC3E; }
     
-    /* 2. Box Metriche */
-    div[data-testid="stMetric"] { 
-        background-color: #1C2128; 
-        border: 1px solid #30363D; 
-        padding: 15px; 
-        border-radius: 10px; 
-    }
-    
-    /* 3. Personalizzazione Slider */
-    .stSlider > div > div > div > div { background-color: #F0BC3E !important; }
-    
-    /* 4. Header Brand */
-    .brand-text { 
-        font-size: 2.5rem; 
-        font-weight: bold; 
+    /* Titoli Eleganti */
+    h1, h2, h3 { 
         font-family: 'Playfair Display', serif; 
         color: #F0BC3E; 
+        text-align: center;
+        font-weight: 400;
+        letter-spacing: 1px;
     }
     
-    /* 5. Pulizia Interfaccia */
-    #MainMenu { display: none; }
-    footer { display: none; }
+    /* Header Brandizzato */
+    .brand-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 3rem;
+    }
+    .brand-text { font-size: 3rem; font-weight: bold; color: #F0BC3E; }
 
-    /* 6. ANIMAZIONE SINUOSA (Glow dorato intermittente) */
-    @keyframes gold-pulse {
-        0% { filter: drop-shadow(0 0 5px rgba(240, 188, 62, 0.2)); }
-        50% { filter: drop-shadow(0 0 20px rgba(240, 188, 62, 0.5)); }
-        100% { filter: drop-shadow(0 0 5px rgba(240, 188, 62, 0.2)); }
+    /* Animazione "Sinuosa" - Glow Interno senza scrollbars */
+    @keyframes subtle-glow {
+        0% { filter: brightness(0.9) saturate(0.9); }
+        50% { filter: brightness(1.2) saturate(1.2) drop-shadow(0 0 10px rgba(240, 188, 62, 0.4)); }
+        100% { filter: brightness(0.9) saturate(0.9); }
     }
 
-    /* Applica l'animazione e l'effetto al passaggio del mouse */
-    div[data-testid="stPlotlyChart"] {
-        animation: gold-pulse 4s infinite ease-in-out;
-        transition: transform 0.3s ease, filter 0.3s ease;
+    /* Applica l'animazione solo al contenuto del grafico */
+    .js-plotly-plot {
+        animation: subtle-glow 5s infinite ease-in-out;
+        border-radius: 20px;
     }
     
-    div[data-testid="stPlotlyChart"]:hover {
-        transform: scale(1.01);
-        filter: drop-shadow(0 0 25px rgba(240, 188, 62, 0.8));
-    }
+    /* Rimuove le barre di scorrimento fastidiose */
+    .element-container, .stPlotlyChart { overflow: hidden !important; }
+    
+    #MainMenu, footer { display: none; }
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. HEADER BRANDIZZATO (Centrato) ---
-import base64
+# --- 2. HEADER BRANDIZZATO ---
+st.markdown(f"""
+    <div class="brand-container">
+        {logo_html}
+        <span class="brand-text">RGandja</span>
+    </div>
+""", unsafe_allow_html=True)
 
-def get_base64_img(path):
-    with open(path, "rb") as f:
-        return base64.b64encode(f.read()).decode()
-
-try:
-    img_base64 = get_base64_img("logo.png")
-    logo_html = f'<img src="data:image/png;base64,{img_base64}" width="60" style="vertical-align: middle;">'
-except:
-    logo_html = '<span style="font-size: 50px;">📈</span>'
+st.markdown("<h2>Global Economic Intelligence</h2>", unsafe_allow_html=True)
 
 # Contenitore con justify-content: center per centrare tutto
 st.markdown(f"""
@@ -185,20 +177,15 @@ with st.sidebar:
 
     st.divider()
 
-    # Esportazione Dati (Ottimizzata: il CSV viene generato SOLO al clic)
-    @st.cache_data
-    def convert_df(df):
-        return df.to_csv(index=False).encode('utf-8')
-
-    csv_data = convert_df(gdp_df)
-
+    # Esportazione Dati ottimizzata senza funzioni nidificate nella sidebar
     st.download_button(
         label="📥 Scarica Report Dati (CSV)",
-        data=csv_data,
+        data=gdp_df.to_csv(index=False).encode('utf-8'),
         file_name='rgandja_gdp_report.csv',
         mime='text/csv',
         help="Clicca per scaricare i dati completi in formato CSV"
     )
+
 # --- 6. DASHBOARD INTERATTIVA (Mappa Centrata) ---
 if not selected_countries:
     st.warning("⚠️ Seleziona almeno un paese per attivare l'analisi.")
@@ -213,25 +200,34 @@ else:
     # SOTTOTITOLO CENTRALIZZATO
     st.markdown("<h2 style='text-align: center;'>Global Economic Intelligence</h2>", unsafe_allow_html=True)
     
+    # --- A. MAPPA MONDIALE (Inserita correttamente dentro l'else) ---
     map_year_data = gdp_df[gdp_df['Year'] == to_year].dropna()
 
-# A. MAPPA MONDIALE (Effetto Wow)
-    
-    map_year_data = gdp_df[gdp_df['Year'] == to_year].dropna()
     fig_map = px.choropleth(
         map_year_data, 
         locations="Country Code", 
         color="GDP", 
         hover_name="Country Name", 
-        color_continuous_scale="YlOrRd",
+        color_continuous_scale=["#1C2128", "#E3B341", "#F0BC3E"], # Scala dorata premium
         template="plotly_dark"
     )
-    fig_map.update_layout(height=400, margin={"r":0,"t":0,"l":0,"b":0})
-    st.plotly_chart(fig_map, use_container_width=True)
 
+    fig_map.update_layout(
+        height=700, # Più grande e d'impatto
+        margin={"r":10,"t":10,"l":10,"b":10},
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        geo=dict(
+            showframe=False,
+            showcoastlines=True,
+            projection_type='natural earth',
+            bgcolor='rgba(0,0,0,0)'
+        )   
+    )
+    st.plotly_chart(fig_map, use_container_width=True)
     st.divider()
 
-    # 🔄 Auto-refresh ogni 60 secondi (Fix tag HTML)
+    # 🔄 Auto-refresh ogni 60 secondi (Mantenuto allineato dentro l'else)
     st.markdown("""
     <script>
         setTimeout(function(){
@@ -240,7 +236,7 @@ else:
     </script>
     """, unsafe_allow_html=True)
 
-    # B. ANALISI STORICA E SHOCK (Grafico Lineare)
+    # B. ANALISI STORICA E SHOCK (Grafico Lineare - Allineato dentro l'else)
     st.subheader("📈 Analisi Trend & Eventi Critici")
     fig_line = px.line(filtered_df, x="Year", y="GDP", color="Country Code", template="plotly_dark")
     
@@ -255,7 +251,7 @@ else:
             name='Shock Economico'
         ))
     st.plotly_chart(fig_line, use_container_width=True)
-
+    
     # C. EXECUTIVE INSIGHTS (Metriche Intelligenti)
     st.subheader("💡 Insights Strategici")
     c1, c2 = st.columns(2)
