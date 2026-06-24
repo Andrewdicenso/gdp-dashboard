@@ -21,26 +21,25 @@ st.set_page_config(
     }
 )
 
-# --- FIX ACCESSIBILITÀ (Sblocca Zoom e imposta Main Landmark) ---
+# Miglioramento SEO: Meta Description
+st.markdown('<meta name="description" content="Dashboard economica RGandja: analisi in tempo reale del PIL mondiale e shock economici con modelli predittivi.">', unsafe_allow_html=True)
+
+# FIX ACCESSIBILITÀ POTENZIATO: Risolve Zoom e Landmark (il segreto per il 100%)
 st.components.v1.html(
     """
     <script>
-        function applyA11yFixes() {
-            // 1. Sblocca la lente di ingrandimento (Zoom)
-            var meta = window.parent.document.querySelector('meta[name="viewport"]');
-            if (meta) {
-                meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
-            }
+        function fixA11y() {
+            // Sblocca lo zoom su mobile
+            const meta = window.parent.document.querySelector('meta[name="viewport"]');
+            if (meta) meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
             
-            // 2. Imposta il punto di riferimento principale (Main Landmark)
-            var mainContent = window.parent.document.querySelector('section.main');
-            if (mainContent) {
-                mainContent.setAttribute('role', 'main');
-                mainContent.setAttribute('aria-label', 'Dashboard Economica RGandja');
-            }
+            // Definisce l'area principale per gli screen reader
+            const main = window.parent.document.querySelector('section.main');
+            if (main) main.setAttribute('role', 'main');
         }
-        // Esegue il fix dopo il caricamento della pagina
-        setTimeout(applyA11yFixes, 1000);
+        // Esegue il fix a intervalli per assicurarsi che Streamlit sia pronto
+        fixA11y();
+        [1000, 3000, 5000].forEach(t => setTimeout(fixA11y, t));
     </script>
     """,
     height=0,
