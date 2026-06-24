@@ -9,8 +9,34 @@ from sklearn.linear_model import LinearRegression
 # --- 0. CONFIGURAZIONE FILE ---
 DATA_FILENAME = "data/gdp_data.csv"  # ✅ Percorso CORRETTO!
 
-# --- 1. CONFIGURAZIONE E BRANDING (Stile rgandja.com) ---
+# --- 1. CONFIGURAZIONE E BRANDING ---
 st.set_page_config(layout="wide", page_title="RGandja", page_icon='📈')
+
+# --- AGGIUNTA PER ACCESSIBILITÀ (Zoom e Landmark) ---
+st.components.v1.html(
+    """
+    <script>
+        // Funzione per applicare le correzioni al documento principale (parent)
+        function applyA11yFixes() {
+            // 1. Rimuove il blocco dello zoom (user-scalable=no)
+            var meta = window.parent.document.querySelector('meta[name="viewport"]');
+            if (meta) {
+                meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes');
+            }
+            
+            // 2. Identifica l'area principale per gli screen reader
+            var mainContent = window.parent.document.querySelector('section.main');
+            if (mainContent) {
+                mainContent.setAttribute('role', 'main');
+                mainContent.setAttribute('aria-label', 'Dashboard Economica RGandja');
+            }
+        }
+        // Esegue la funzione dopo un breve delay per attendere il caricamento di Streamlit
+        setTimeout(applyA11yFixes, 1000);
+    </script>
+    """,
+    height=0,
+)
 
 st.markdown("""
     <style>
