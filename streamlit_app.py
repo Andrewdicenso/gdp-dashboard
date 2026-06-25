@@ -315,34 +315,38 @@ except:
         """, unsafe_allow_html=True)
 
     with cp2:
-        # Titolo centralizzato e pareggiato
-        st.markdown("<h3 style='text-align: center; color: #F0BC3E; margin-top: 15px;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
+        # 1. Titolo Bianco e allineato alla parte superiore del grafico
+        st.markdown("""
+            <h3 style='text-align: center; color: #FFFFFF; margin-top: 0px; margin-bottom: 25px;'>
+                💡 Focus & Leadership
+            </h3>
+        """, unsafe_allow_html=True)
         
-        # BOX FOCUS CENTRALIZZATO
+        # Recupero dati per il blocco Focus
         focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
         if len(focus_data) > 1:
             total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
-            st.markdown(f"""
-                <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
-                    <p style="margin: 0; color: #808495; font-size: 1.1rem;">Focus {focus_country}</p>
-                    <h2 style="margin: 10px 0; color: #F0BC3E; font-size: 2.8rem;">{total_growth:+.1f}%</h2>
-                    <p style="margin: 0; color: #808495;">Crescita nel periodo</p>
-                </div>
-            """, unsafe_allow_html=True)
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        
-        # MARKET LEADER PULITO
-        if not filtered_df.empty:
-            leader = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
-            st.markdown(f"""
-                <div style="text-align: center; margin-top: 10px;">
-                    <p style="color: #F0BC3E; font-size: 1.1rem; margin-bottom: 5px;">Market Leader nel {to_year}</p>
-                    <p style="color: #FFFFFF; font-size: 1.3rem;">Il PIL più elevato è di <strong>{leader}</strong></p>
-                </div>
-            """, unsafe_allow_html=True)
             
+            # 2. Contenitore unico con sfondo grigio fumo scuro fino al Market Leader
+            st.markdown(f"""
+                <div style="text-align: center; background-color: #161B22; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
+                    <!-- Focus ITA in Oro -->
+                    <p style="margin: 0; color: #F0BC3E; font-size: 1.2rem; font-weight: bold;">Focus {focus_country}</p>
+                    
+                    <!-- Percentuale Verde Elegante (dimensione ridotta) -->
+                    <h2 style="margin: 10px 0; color: #2ecc71; font-size: 1.8rem; font-weight: bold;">{total_growth:+.1f}%</h2>
+                    
+                    <!-- Sottotitolo Verde Soft -->
+                    <p style="margin: 0; color: #2ecc71; font-size: 0.9rem; opacity: 0.9;">Crescita nel periodo</p>
+                    
+                    <hr style="border: 0; border-top: 1px solid #30363D; margin: 20px 0;">
+                    
+                    <!-- Market Leader integrato nel box -->
+                    <p style="color: #F0BC3E; font-size: 1rem; margin-bottom: 5px; font-weight: bold;">Market Leader nel {to_year}</p>
+                    <p style="color: #FFFFFF; font-size: 1.1rem; margin: 0;">Il PIL più elevato è di <strong>{leader if not filtered_df.empty else 'N/A'}</strong></p>
+                </div>
+            """, unsafe_allow_html=True)
+
     # --- FOOTER TECNICO (Estratto dalle colonne per stare a fondo pagina) ---
     st.divider()
     st.caption("© 2026 RGandja | Data Intelligence Unit")
