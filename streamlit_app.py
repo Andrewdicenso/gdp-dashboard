@@ -11,12 +11,12 @@ import base64
 DATA_FILENAME = "data/gdp_data.csv"
 
 # --- 1. CONFIGURAZIONE E BRANDING ---
-st.set_page_config(
-    layout="wide", 
-    page_title="RGandja | Global GDP Intelligence", 
-    page_icon='📈',
-    initial_sidebar_state="expanded"
-)
+st.set_page_config
+layout="wide", 
+page_title="RGandja | Global GDP Intelligence", 
+page_icon='📈',
+initial_sidebar_state="expanded",
+menu_items="Get Help':'https://rgandja.com",
 
 # FIX ACCESSIBILITÀ E VIEWPORT
 st.components.v1.html(
@@ -215,8 +215,8 @@ else:
         focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
         if len(focus_data) > 1:
             total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
-            color_text = "#00FF00" if total_growth >= 0 else "#FF0000"
-            growth_str = f"{total_growth:+.1f}%"
+            color_stat = "#00FF00" if total_growth >= 0 else "#FF0000"
+            growth_text = f"{total_growth:+.1f}%"
         else:
             growth_str = "0.0%"; color_text = "#FFFFFF"
 
@@ -227,16 +227,16 @@ else:
         st.markdown(f"""
             <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
                 <p style="margin: 0; color: #FFFFFF; font-size: 1.2rem; opacity: 0.8;">Focus {focus_country}</p>
-                <h2 class="gold-glow-text" style="margin: 10px 0; font-size: 3.5rem;">{growth_str}</h2>
-                <p style="margin: 0; color: {color_text}; font-weight: bold; font-size: 1.1rem;">Crescita nel periodo</p>
+                <h2 class="gold-glow-text" style="margin: 10px 0; font-size: 3.5rem;">{growth_text}</h2>
+                <p style="margin: 0; color: {color_stat}; font-weight: bold; font-size: 1.1rem;">Crescita nel periodo</p>
             </div>
         """, unsafe_allow_html=True)
         
         # Market Leader
         st.markdown(f"""
             <div style="text-align: center; margin-top: 30px;">
-                <p style="color: #FFFFFF; font-size: 28px; margin-bottom: 5px; font-weight: bold;">Market Leader nel {to_year}</p>
-                <p style="color: #FFFFFF; font-size: 1.3rem;">Il PIL più elevato è di <strong style="color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5);">{leader_val}</strong></p>
+                <p style="color: #FFFFFF; font-size: 28px; margin-bottom: 5px; font-weight: bold;">Market Leader 2025 {to_year}</p>
+                <p style="color: #FFFFFF; font-size: 1.3rem;">  <strong style="color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5);">{leader_val}</strong></p>
             </div>
         """, unsafe_allow_html=True)
 
