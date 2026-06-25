@@ -231,7 +231,7 @@ else:
                 <p style="margin: 0; color: #FFFFFF; font-weight: bold; font-size: 1.1rem;">Crescita nel periodo</p>
             </div>
         """, unsafe_allow_html=True)
-        
+        st.divider()
         st.markdown(f"""
             <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
                 <p style="margin: 0; color: #FFFFFF; font-size: 1.1rem; font-weight: bold;">Market Leader nel {to_year}</p>
@@ -240,7 +240,7 @@ else:
             </div>
         """, unsafe_allow_html=True)
         st.divider()
-        
+
     # --- D. PREVISIONI (Ora in basso a tutta larghezza - Inversione Dimensioni) ---
     st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
     fig_pred = go.Figure()
