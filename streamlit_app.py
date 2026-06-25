@@ -189,7 +189,7 @@ else:
 
     # --- C. LAYOUT AFFIANCATO: TREND (Sinistra) + FOCUS & LEADERSHIP (Destra) ---
     col_left, col_right = st.columns([2, 1])
-
+    st.divider()
     with col_left:
         st.subheader("📈 Analisi Trend & Eventi Critici")
         fig_line = px.line(filtered_df, x="Year", y="GDP", color="Country Code", template="plotly_dark")
