@@ -222,7 +222,7 @@ else:
 
         # Titolo Bianco (Stessa grandezza di Predictive Outlook)
         st.markdown(f"<h3 style='color: #FFFFFF; margin-top: 0px; font-size: 28px;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
-        
+        st.divider()
         # Box Centralizzato con Bagliore Oro
         st.markdown(f"""
             <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
@@ -239,7 +239,7 @@ else:
                 <p style="margin: 0; color: #FFFFFF; font-weight: bold; font-size: 1.1rem;">Il PIL più elevato registrato</p>
             </div>
         """, unsafe_allow_html=True)
-        st.divider()
+        
 
     # --- D. PREVISIONI (Ora in basso a tutta larghezza - Inversione Dimensioni) ---
     st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
