@@ -315,31 +315,42 @@ except:
         """, unsafe_allow_html=True)
 
     with cp2:
-        # 1. Calcolo valori
-        leader_name = filtered_df.groupby('Country Code')['GDP'].last().idxmax() if not filtered_df.empty else "N/A"
-        
-        # 2. Titolo Bianco
-        st.markdown("<h3 style='text-align: center; color: #FFFFFF; margin-top: 0px;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
-        
-        # 3. Recupero dati crescita
+        # --- 1. CALCOLO PREVENTIVO DELLE VARIABILI ---
+        # Calcoliamo il leader fuori da ogni blocco HTML
+        try:
+            if not filtered_df.empty:
+                leader_val = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
+            else:
+                leader_val = "N/A"
+        except:
+            leader_val = "N/A"
+
+        # Calcoliamo la crescita fuori da ogni blocco HTML
         focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
         if len(focus_data) > 1:
             total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
-# 4. Box Unico (Adattivo - Si espande quanto serve)
-            st.markdown(f"""
-                <div style="margin-top: 60px; text-align: center; background-color: #161B22; padding: 20px; border-radius: 15px; border: 1px solid #30363D;">
-                    <!-- Sezione Focus -->
-                    <p style="margin: 0; color: #F0BC3E; font-size: 1.1rem; font-weight: bold; line-height: 1;">Focus {focus_country}</p>
-                    <h2 style="margin: 8px 0; color: #2ecc71; font-size: 1.8rem; font-weight: bold; line-height: 1;">{total_growth:+.1f}%</h2>
-                    <p style="margin: 0; color: #2ecc71; font-size: 0.85rem; opacity: 0.9;">Crescita nel periodo</p>
-                    
-                    <hr style="border: 0; border-top: 1px solid #30363D; margin: 15px 0;">
-                    
-                    <!-- Sezione Market Leader - ORA VISIBILE -->
-                    <p style="margin: 0; color: #F0BC3E; font-size: 1rem; font-weight: bold; line-height: 1;">Market Leader nel {to_year}</p>
-                    <p style="margin: 5px 0 0 0; color: #FFFFFF; font-size: 1.1rem; line-height: 1.1;">Il PIL più elevato è di <strong>{leader_val}</strong></p>
-                </div>
-            """, unsafe_allow_html=True)            
+            growth_text = f"{total_growth:+.1f}%"
+        else:
+            growth_text = "0.0%"
+
+        # --- 2. TITOLO BIANCO ---
+        st.markdown("<h3 style='text-align: center; color: #FFFFFF; margin-top: 0px;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
+        
+        # --- 3. BOX GRAFICO (Senza logica interna per evitare errori) ---
+        st.markdown(f"""
+            <div style="margin-top: 60px; text-align: center; background-color: #161B22; padding: 20px; border-radius: 15px; border: 1px solid #30363D;">
+                <!-- Sezione Focus -->
+                <p style="margin: 0; color: #F0BC3E; font-size: 1.1rem; font-weight: bold; line-height: 1;">Focus {focus_country}</p>
+                <h2 style="margin: 8px 0; color: #2ecc71; font-size: 1.8rem; font-weight: bold; line-height: 1;">{growth_text}</h2>
+                <p style="margin: 0; color: #2ecc71; font-size: 0.85rem; opacity: 0.9;">Crescita nel periodo</p>
+                
+                <hr style="border: 0; border-top: 1px solid #30363D; margin: 15px 0;">
+                
+                <!-- Sezione Market Leader -->
+                <p style="margin: 0; color: #F0BC3E; font-size: 1rem; font-weight: bold; line-height: 1;">Market Leader nel {to_year}</p>
+                <p style="margin: 5px 0 0 0; color: #FFFFFF; font-size: 1.1rem; line-height: 1.1;">Il PIL più elevato è di <strong>{leader_val}</strong></p>
+            </div>
+        """, unsafe_allow_html=True)        
 
     # --- FOOTER TECNICO (Estratto dalle colonne per stare a fondo pagina) ---
     st.divider()
