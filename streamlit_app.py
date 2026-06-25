@@ -315,30 +315,32 @@ except:
         """, unsafe_allow_html=True)
 
     with cp2:
-        # 1. Calcolo del valore del Leader PRIMA dell'HTML
-        if not filtered_df.empty:
-            leader_name = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
-        else:
-            leader_name = "N/A"
+        # 1. Calcolo del valore del Leader
+        leader_name = filtered_df.groupby('Country Code')['GDP'].last().idxmax() if not filtered_df.empty else "N/A"
 
-        # 2. Titolo Bianco
-        st.markdown("<h3 style='text-align: center; color: #FFFFFF; margin-top: 0px; margin-bottom: 25px;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
+        # 2. Titolo Bianco superiore
+        st.markdown("<h3 style='text-align: center; color: #FFFFFF; margin-top: 0px; margin-bottom: 10px;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
         
-        # 3. Recupero dati per la crescita
+        # 3. Distanziatore per spingere il box verso la base del grafico
+        st.markdown("<div style='height: 80px;'></div>", unsafe_allow_html=True)
+
+        # 4. Recupero dati per la crescita
         focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
         if len(focus_data) > 1:
             total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
-            growth_text = f"{total_growth:+.1f}%"
             
-            # 4. Box Unico (Senza logica interna, solo variabili)
             st.markdown(f"""
-                <div style="text-align: center; background-color: #161B22; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
-                    <p style="margin: 0; color: #F0BC3E; font-size: 1.2rem; font-weight: bold;">Focus {focus_country}</p>
-                    <h2 style="margin: 10px 0; color: #2ecc71; font-size: 1.8rem; font-weight: bold;">{growth_text}</h2>
-                    <p style="margin: 0; color: #2ecc71; font-size: 0.9rem; opacity: 0.9;">Crescita nel periodo</p>
-                    <hr style="border: 0; border-top: 1px solid #30363D; margin: 20px 0;">
-                    <p style="color: #F0BC3E; font-size: 1rem; margin-bottom: 5px; font-weight: bold;">Market Leader nel {to_year}</p>
-                    <p style="color: #FFFFFF; font-size: 1.1rem; margin: 0;">Il PIL più elevato è di <strong>{leader_name}</strong></p>
+                <div style="text-align: center; background-color: #161B22; padding: 15px; border-radius: 15px; border: 1px solid #30363D; line-height: 1.2;">
+                    <!-- Sezione Focus Compatta -->
+                    <p style="margin: 0; color: #F0BC3E; font-size: 1.1rem; font-weight: bold;">Focus {focus_country}</p>
+                    <h2 style="margin: 5px 0; color: #2ecc71; font-size: 1.8rem; font-weight: bold;">{total_growth:+.1f}%</h2>
+                    <p style="margin: 0; color: #2ecc71; font-size: 0.85rem; opacity: 0.9;">Crescita nel periodo</p>
+                    
+                    <hr style="border: 0; border-top: 1px solid #30363D; margin: 12px 0;">
+                    
+                    <!-- Sezione Market Leader Compatta -->
+                    <p style="margin: 0; color: #F0BC3E; font-size: 1rem; font-weight: bold;">Market Leader nel {to_year}</p>
+                    <p style="margin: 5px 0 0 0; color: #FFFFFF; font-size: 1.1rem;">Il PIL più elevato è di <strong>{leader_name}</strong></p>
                 </div>
             """, unsafe_allow_html=True)
 
