@@ -219,7 +219,7 @@ else:
             growth_str = f"{total_growth:+.1f}%"
         else:
             growth_str = "0.0%"; color_text = "#FFFFFF"
-        st.divider()
+        
         # Titolo Bianco (Stessa grandezza di Predictive Outlook)
         st.markdown(f"<h3 style='color: #FFFFFF; margin-top: 0px; font-size: 28px;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
         st.divider()
