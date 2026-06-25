@@ -329,20 +329,20 @@ except:
         if len(focus_data) > 1:
             total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
             
-            st.markdown(f"""
-                <div style="text-align: center; background-color: #161B22; padding: 15px; border-radius: 15px; border: 1px solid #30363D; line-height: 1.2;">
-                    <!-- Sezione Focus Compatta -->
-                    <p style="margin: 0; color: #F0BC3E; font-size: 1.1rem; font-weight: bold;">Focus {focus_country}</p>
-                    <h2 style="margin: 5px 0; color: #2ecc71; font-size: 1.8rem; font-weight: bold;">{total_growth:+.1f}%</h2>
-                    <p style="margin: 0; color: #2ecc71; font-size: 0.85rem; opacity: 0.9;">Crescita nel periodo</p>
-                    
-                    <hr style="border: 0; border-top: 1px solid #30363D; margin: 12px 0;">
-                    
-                    <!-- Sezione Market Leader Compatta -->
-                    <p style="margin: 0; color: #F0BC3E; font-size: 1rem; font-weight: bold;">Market Leader nel {to_year}</p>
-                    <p style="margin: 5px 0 0 0; color: #FFFFFF; font-size: 1.1rem;">Il PIL più elevato è di <strong>{leader_name}</strong></p>
-                </div>
-            """, unsafe_allow_html=True)
+        st.markdown(f"""
+            <div style="text-align: center; background-color: #161B22; padding: 15px; border-radius: 15px; border: 1px solid #30363D; line-height: 1.2;">
+                <!-- Sezione Focus Compatta -->
+                <p style="margin: 0; color: #F0BC3E; font-size: 1.1rem; font-weight: bold;">Focus {focus_country}</p>
+                <h2 style="margin: 5px 0; color: #2ecc71; font-size: 1.8rem; font-weight: bold;">{total_growth:+.1f}%</h2>
+                <p style="margin: 0; color: #2ecc71; font-size: 0.85rem; opacity: 0.9;">Crescita nel periodo</p>
+                
+                <hr style="border: 0; border-top: 1px solid #30363D; margin: 12px 0;">
+                
+                <!-- Sezione Market Leader Compatta -->
+                <p style="margin: 0; color: #F0BC3E; font-size: 1rem; font-weight: bold;">Market Leader nel {to_year}</p>
+                <p style="margin: 5px 0 0 0; color: #FFFFFF; font-size: 1.1rem;">Il PIL più elevato è di <strong>{leader_name}</strong></p>
+            </div>
+        """, unsafe_allow_html=True)
 
     # --- FOOTER TECNICO (Estratto dalle colonne per stare a fondo pagina) ---
     st.divider()
