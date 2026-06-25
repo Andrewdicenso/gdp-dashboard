@@ -274,16 +274,37 @@ try:
 except:
     st.info("Dati di mercato momentaneamente non disponibili")
 
-    # --- D. PREVISIONI E INSIGHTS (Layout Millimetrico) ---
+    # --- D. PREVISIONI E INSIGHTS (Versione Corretta e Sinuosa) ---
     st.divider()
     cp1, cp2 = st.columns([2, 1])
 
     with cp1:
         st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
-        # ... mantieni qui il tuo codice fig_pred e st.plotly_chart ...
+        
+        # 1. Inizializzazione del Grafico (Indispensabile per evitare l'errore)
+        fig_pred = go.Figure()
+        
+        for country in selected_countries:
+            c_full = gdp_df[gdp_df['Country Code'] == country].dropna()
+            if len(c_full) > 1:
+                X = c_full['Year'].values.reshape(-1, 1)
+                y = c_full['GDP'].values
+                model = LinearRegression().fit(X, y)
+                future = np.array(range(2026, 2031)).reshape(-1, 1)
+                preds = model.predict(future)
+                
+                fig_pred.add_trace(go.Scatter(x=c_full['Year'], y=y, name=f"{country} (Storico)"))
+                fig_pred.add_trace(go.Scatter(
+                    x=[int(year) for year in future.flatten()],
+                    y=preds, 
+                    name=f"{country} (Forecasting)", 
+                    line=dict(dash='dash')
+                ))
+            
+        fig_pred.update_layout(template="plotly_dark", height=450, margin=dict(l=0, r=0, t=20, b=0))
         st.plotly_chart(fig_pred, use_container_width=True)
         
-        # SPIEGAZIONE ESTESA (Risolto il problema del testo nascosto)
+        # SPIEGAZIONE ESTESA SOTTO IL GRAFICO
         st.markdown("""
             <div style="text-align: justify; color: #808495; font-size: 0.95rem; margin-top: 20px; 
                         border-left: 3px solid #F0BC3E; padding-left: 15px; line-height: 1.6; clear: both;">
@@ -294,28 +315,25 @@ except:
         """, unsafe_allow_html=True)
 
     with cp2:
-        # Pareggiamo il titolo con quello a sinistra
-        st.markdown("<h3 style='text-align: center; color: #F0BC3E;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
-        
-        # Spazio vuoto per allineare visivamente ai grafici
+        # Titolo centralizzato e pareggiato
+        st.markdown("<h3 style='text-align: center; color: #F0BC3E; margin-top: 15px;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # BLOCCO FOCUS CENTRALIZZATO E PIÙ GRANDE
+        # BOX FOCUS CENTRALIZZATO
         focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
         if len(focus_data) > 1:
             total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
-            
             st.markdown(f"""
-                <div style="text-align: center; background-color: #1C2128; padding: 20px; border-radius: 15px; border: 1px solid #30363D;">
+                <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
                     <p style="margin: 0; color: #808495; font-size: 1.1rem;">Focus {focus_country}</p>
-                    <h2 style="margin: 10px 0; color: #F0BC3E; font-size: 2.5rem;">{total_growth:+.1f}%</h2>
+                    <h2 style="margin: 10px 0; color: #F0BC3E; font-size: 2.8rem;">{total_growth:+.1f}%</h2>
                     <p style="margin: 0; color: #808495;">Crescita nel periodo</p>
                 </div>
             """, unsafe_allow_html=True)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # MARKET LEADER SENZA SFONDO E SENZA DUE PUNTI
+        # MARKET LEADER PULITO
         if not filtered_df.empty:
             leader = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
             st.markdown(f"""
@@ -324,6 +342,7 @@ except:
                     <p style="color: #FFFFFF; font-size: 1.3rem;">Il PIL più elevato è di <strong>{leader}</strong></p>
                 </div>
             """, unsafe_allow_html=True)
+            
     # --- FOOTER TECNICO (Estratto dalle colonne per stare a fondo pagina) ---
     st.divider()
     st.caption("© 2026 RGandja | Data Intelligence Unit")
