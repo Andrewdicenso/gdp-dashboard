@@ -185,12 +185,11 @@ else:
     except:
         st.info("Dati di mercato momentaneamente non disponibili")
 
-    st.divider()
+st.divider()
 
     # --- C. LAYOUT AFFIANCATO: TREND (Sinistra) + FOCUS & LEADERSHIP (Destra) ---
-    col_left, col_right = st.columns([2, 1])
-    st.divider()
-    with col_left:
+col_left, col_right = st.columns([2, 1])
+with col_left:
         st.subheader("📈 Analisi Trend & Eventi Critici")
         fig_line = px.line(filtered_df, x="Year", y="GDP", color="Country Code", template="plotly_dark")
         
@@ -205,7 +204,7 @@ else:
         fig_line.update_layout(height=450, margin=dict(l=0, r=0, t=20, b=0), paper_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig_line, use_container_width=True)
 
-    with col_right:
+with col_right:
         # Calcolo Variabili Focus
         try:
             leader_val = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
@@ -242,10 +241,10 @@ else:
         st.divider()
 
     # --- D. PREVISIONI (Ora in basso a tutta larghezza - Inversione Dimensioni) ---
-    st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
-    fig_pred = go.Figure()
+st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
+fig_pred = go.Figure()
     
-    for country in selected_countries:
+for country in selected_countries:
         c_full = gdp_df[gdp_df['Country Code'] == country].dropna()
         if len(c_full) > 1:
             X = c_full['Year'].values.reshape(-1, 1)
@@ -259,14 +258,14 @@ else:
                 x=future.flatten(), y=preds, name=f"{country} (Forecasting)", line=dict(dash='dash')
             ))
             
-    fig_pred.update_layout(template="plotly_dark", height=550, margin=dict(l=0, r=0, t=20, b=0), paper_bgcolor='rgba(0,0,0,0)')
-    st.plotly_chart(fig_pred, use_container_width=True)
+fig_pred.update_layout(template="plotly_dark", height=550, margin=dict(l=0, r=0, t=20, b=0), paper_bgcolor='rgba(0,0,0,0)')
+st.plotly_chart(fig_pred, use_container_width=True)
     
-    st.markdown(f"""
+st.markdown(f"""
         <div style="text-align: justify; color: #808495; font-size: 0.95rem; margin-top: 15px; border-left: 3px solid #F0BC3E; padding-left: 15px;">
             <strong>Metodologia:</strong> Regressione lineare basata sui trend 1960-{max_y}. Le proiezioni non includono shock esogeni imprevisti.
         </div>
     """, unsafe_allow_html=True)
 
-    st.divider()
-    st.caption("© 2026 RGandja | Data Intelligence Unit")
+st.divider()
+st.caption("© 2026 RGandja | Data Intelligence Unit")
