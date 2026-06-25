@@ -176,7 +176,7 @@ else:
                     change = ((last_p - hist['Close'].iloc[0]) / hist['Close'].iloc[0]) * 100
                     data.append({"Asset": t, "Prezzo": f"{last_p:.2f}", "Var %": change})
             return pd.DataFrame(data)
-
+st.divider()
         m_df = get_market_data()
         cols = st.columns(len(m_df))
         for i, row in m_df.iterrows():
@@ -185,48 +185,60 @@ else:
     except:
         st.info("Dati di mercato momentaneamente non disponibili")
 
-    st.divider()
+st.divider()
 
-    # Creiamo le colonne
-    col_left, col_right = st.columns([2.2, 1])
-
-    with col_left:
-        # 1. Titolo allineato perfettamente con quello di destra
-        st.markdown(f"<h3 style='color: #F0BC3E; margin-top: 0px; font-size: 20px; text-align: left; padding-left: 10px;'>📈 Analisi Trend & Eventi Critici</h3>", unsafe_allow_html=True)
+    # --- C. LAYOUT AFFIANCATO: TREND (Sinistra) + FOCUS & LEADERSHIP (Destra) ---
+col_left, col_right = st.columns([2, 1])
+with col_left:
+        st.subheader("📈 Analisi Trend & Eventi Critici")
+        fig_line = px.line(filtered_df, x="Year", y="GDP", color="Country Code", template="plotly_dark")
         
-        # 2. Il grafico con un po' di spazio sopra per bilanciare visivamente i box
-        # Riduciamo l'altezza se necessario per farlo stare "dentro" le righe
-        fig_line.update_layout(
-            height=480, # Altezza ottimizzata per pareggiare i due box a destra
-            margin=dict(l=10, r=10, t=30, b=10),
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)'
-        )
+        # Inserimento Anomalie (Shock Economici)
+        anomalies_found = filtered_df[filtered_df['Is_Anomaly'] == True]
+        if not anomalies_found.empty:
+            fig_line.add_trace(go.Scatter(
+                x=anomalies_found['Year'], y=anomalies_found['GDP'], 
+                mode='markers', marker=dict(color='#FF4B4B', size=10, symbol='x'),
+                name='Shock Economico'
+            ))
+        fig_line.update_layout(height=450, margin=dict(l=0, r=0, t=20, b=0), paper_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig_line, use_container_width=True)
 
-    with col_right:
-        # Titolo della colonna destra (stessa altezza di quello a sinistra)
-        st.markdown(f"<h3 style='color: #FFFFFF; margin-top: 0px; font-size: 20px; text-align: center;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
-        
-        # Box Focus
-        st.markdown(f"""
-            <div style="text-align: center; background-color: #1C2128; padding: 12px; border-radius: 12px; border: 1px solid #30363D; width: 90%; margin: 10px auto 15px auto;">
-                <p style="margin: 0; color: #FFFFFF; font-size: 0.9rem; font-weight: bold;">Focus {focus_country}</p>
-                <h2 class="gold-glow-text" style="margin: 5px 0; font-size: 2.2rem;">{growth_str}</h2>
-                <p style="margin: 0; color: {color_text}; font-weight: bold; font-size: 0.85rem;">Crescita nel periodo</p>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        # Box Market Leader
-        st.markdown(f"""
-            <div style="text-align: center; background-color: #1C2128; padding: 12px; border-radius: 12px; border: 1px solid #30363D; width: 90%; margin: 0 auto;">
-                <p style="margin: 0; color: #FFFFFF; font-size: 0.9rem; font-weight: bold;">Market Leader nel {to_year}</p>
-                <h2 style="margin: 8px 0; color: #FFD700; font-size: 2rem;">{leader_val}</h2>
-                <p style="margin: 0; color: #FFFFFF; opacity: 0.7; font-size: 0.8rem;">Il PIL più elevato</p>
-            </div>
-        """, unsafe_allow_html=True)
+with col_right:
+        # Calcolo Variabili Focus
+        try:
+            leader_val = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
+        except:
+            leader_val = "N/A"
 
-    st.divider()
+        focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
+        if len(focus_data) > 1:
+            total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
+            color_text = "#00FF00" if total_growth >= 0 else "#FF0000"
+            growth_str = f"{total_growth:+.1f}%"
+        else:
+            growth_str = "0.0%"; color_text = "#FFFFFF"
+        
+        # Titolo Bianco (Stessa grandezza di Predictive Outlook)
+        st.markdown(f"<h3 style='color: #FFFFFF; margin-top: 0px; font-size: 28px;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
+        st.divider()
+        # Box Centralizzato con Bagliore Oro
+        st.markdown(f"""
+            <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
+                <p style="margin: 0; color: #FFFFFF; font-weight: bold; font-size: 1.1rem;">Focus {focus_country}</p>
+                <h2 style="margin: 15px 0; color: #FFD700; font-size: 1.5rem; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);">{growth_str}</h2>
+                <p style="margin: 0; color: #FFFFFF; font-weight: bold; font-size: 1.1rem;">Crescita nel periodo</p>
+            </div>
+        """, unsafe_allow_html=True)
+        st.divider()
+        st.markdown(f"""
+            <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
+                <p style="margin: 0; color: #FFFFFF; font-size: 1.1rem; font-weight: bold;">Market Leader nel {to_year}</p>
+                <h2 style="margin: 15px 0; color: #FFD700; font-size: 1.5rem; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);">{leader_val}</h2>
+                <p style="margin: 0; color: #FFFFFF; font-weight: bold; font-size: 1.1rem;">Il PIL più elevato registrato</p>
+            </div>
+        """, unsafe_allow_html=True)
+        st.divider()
 
     # --- D. PREVISIONI (Ora in basso a tutta larghezza - Inversione Dimensioni) ---
 st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
