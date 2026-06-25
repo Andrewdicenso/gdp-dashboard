@@ -70,9 +70,9 @@ def get_base64_img(path):
         with open(path, "rb") as f:
             return base64.b64encode(f.read()).decode()
     except: return None
-
-img_b64 = get_base64_img("logo.png")
-logo_html = f'<img src="data:image/png;base64,{img_b64}" width="60">' if img_b64 else '<span style="font-size: 50px;">📈</span>'
+    img_b64 = get_base64_img("logo.png")
+    # Ho aggiunto la classe 'gold-glow-text' all'interno dello span di fallback
+    logo_html = f'<img src="data:image/png;base64,{img_b64}" width="60">' if img_b64 else '<span class="gold-glow-text" style="font-size: 50px;">📈</span>'
 
 # --- 4. HEADER BRANDIZZATO ---
 st.markdown(f"""
