@@ -77,7 +77,7 @@ def get_base64_img(path):
 # --- 4. HEADER BRANDIZZATO ---
 st.markdown(f"""
     <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 10px; margin-bottom: 5px;">
-    logo_html
+    logo.png
         <span class="brand-text" style="line-height: 1;">RGandja</span>
     </div>
     <h2 style='text-align: center; margin-top: 0; font-size: 1.5rem; color: #FFFFFF; opacity: 0.8;'>Global Economic Intelligence</h2>
