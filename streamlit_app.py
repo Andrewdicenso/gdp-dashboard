@@ -176,7 +176,7 @@ else:
                     change = ((last_p - hist['Close'].iloc[0]) / hist['Close'].iloc[0]) * 100
                     data.append({"Asset": t, "Prezzo": f"{last_p:.2f}", "Var %": change})
             return pd.DataFrame(data)
-
+st.divider()
         m_df = get_market_data()
         cols = st.columns(len(m_df))
         for i, row in m_df.iterrows():
