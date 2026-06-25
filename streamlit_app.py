@@ -83,7 +83,6 @@ st.markdown(f"""
     <h2 style='text-align: center; margin-top: 0; font-size: 1.5rem; color: #FFFFFF; opacity: 0.8;'>Global Economic Intelligence</h2>
 """, unsafe_allow_html=True)
 
-py
 # --- 5. DATA ENGINE (Caricamento e Analisi) ---
 @st.cache_data
 def get_gdp_data():
@@ -161,7 +160,6 @@ else:
     st.plotly_chart(fig_map, use_container_width=True)
     st.divider()
 
-    py
     # --- B. MERCATO AZIONARIO REAL TIME ---
     st.subheader("📊 Mercato Azionario R.T.")
     try:
