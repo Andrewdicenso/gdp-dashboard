@@ -226,7 +226,7 @@ else:
         # Box Centralizzato con Bagliore Oro
         st.markdown(f"""
             <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
-                <p style="margin: 0; color: {color_text}; font-weight: bold; font-size: 1.1rem;">Focus {focus_country}</p>
+                <p class="gold-glow-text" style="margin: 0; color: {color_text}; font-weight: bold; font-size: 1.1rem;">Focus {focus_country}</p>
                 <h2 class="gold-glow-text" style="margin: 10px 0; font-size: 3.5rem;">{growth_str}</h2>
                 <p class="gold-glow-text" style="margin: 0; color: {color_text}; font-weight: bold; font-size: 1.1rem;">Crescita nel periodo</p>
             </div>
