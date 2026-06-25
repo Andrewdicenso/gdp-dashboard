@@ -239,6 +239,7 @@ else:
                 <p style="margin: 0; color: #FFFFFF; font-weight: bold; font-size: 1.1rem;">Il PIL più elevato registrato</p>
             </div>
         """, unsafe_allow_html=True)
+        st.divider()
 
     # --- D. PREVISIONI (Ora in basso a tutta larghezza - Inversione Dimensioni) ---
     st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
