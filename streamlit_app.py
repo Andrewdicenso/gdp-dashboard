@@ -234,9 +234,9 @@ else:
         
         st.markdown(f"""
             <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
-                <p style="margin: 0; color: #FFFFFF; font-size: 1.2rem; font-weight: bold;">Market Leader nel {to_year}</p>
-                <h2 style="margin: 15px 0; color: #FFD700; font-size: 3rem; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);">{leader_val}</h2>
-                <p style="margin: 0; color: #FFFFFF; opacity: 0.8; font-size: 1rem;">Il PIL più elevato registrato</p>
+                <p style="margin: 0; color: #FFFFFF; font-size: 2rem; font-weight: bold;">Market Leader nel {to_year}</p>
+                <h2 style="margin: 15px 0; color: #FFD700; font-size: 2rem; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);">{leader_val}</h2>
+                <p style="margin: 0; color: #FFFFFF; opacity: 0.8; font-size: 2rem;">Il PIL più elevato registrato</p>
             </div>
         """, unsafe_allow_html=True)
 
