@@ -226,17 +226,17 @@ else:
         # Box Centralizzato con Bagliore Oro
         st.markdown(f"""
             <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
-                <p style="margin: 0; color: #FFFFFF; font-weight: bold; font-size: 1.5rem;">Focus {focus_country}</p>
+                <p style="margin: 0; color: #FFFFFF; font-weight: bold; font-size: 1.3rem;">Focus {focus_country}</p>
                 <h2 style="margin: 15px 0; color: #FFD700; font-size: 2rem; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);">{growth_str}</h2>
-                <p style="margin: 0; color: #FFFFFF; font-weight: bold; font-size: 1.5rem;">Crescita nel periodo</p>
+                <p style="margin: 0; color: #FFFFFF; font-weight: bold; font-size: 1.3rem;">Crescita nel periodo</p>
             </div>
         """, unsafe_allow_html=True)
         
         st.markdown(f"""
             <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
-                <p style="margin: 0; color: #FFFFFF; font-size: 1.5rem; font-weight: bold;">Market Leader nel {to_year}</p>
+                <p style="margin: 0; color: #FFFFFF; font-size: 1.3rem; font-weight: bold;">Market Leader nel {to_year}</p>
                 <h2 style="margin: 15px 0; color: #FFD700; font-size: 2rem; text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);">{leader_val}</h2>
-                <p style="margin: 0; color: #FFFFFF; opacity: 0.8; font-size: 1.5rem;">Il PIL più elevato registrato</p>
+                <p style="margin: 0; color: #FFFFFF; opacity: 0.8; font-size: 1.3rem;">Il PIL più elevato registrato</p>
             </div>
         """, unsafe_allow_html=True)
 
