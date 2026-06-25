@@ -235,8 +235,8 @@ else:
         # Market Leader
         st.markdown(f"""
             <div style="text-align: center; margin-top: 30px;">
-                <p style="color: #FFFFFF; font-size: 28px; margin-bottom: 5px; font-weight: bold;">Market Leader 2025 {to_year}</p>
-                <p style="color: #FFFFFF; font-size: 1.3rem;"> PIL <strong style="color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5);">{leader_val}</strong></p>
+                <p style="color: #FFFFFF; font-size: 28px; margin-bottom: 5px; font-weight: bold;">Market Leader {to_year}</p>
+                <p style="color: #FFD700; font-size: 1.3rem;"> PIL <strong style="color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5);">{leader_val}</strong></p>
             </div>
         """, unsafe_allow_html=True)
 
