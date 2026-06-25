@@ -316,7 +316,6 @@ except:
 
     with cp2:
         # --- 1. CALCOLO PREVENTIVO DELLE VARIABILI ---
-        # Calcoliamo il leader fuori da ogni blocco HTML
         try:
             if not filtered_df.empty:
                 leader_val = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
@@ -325,40 +324,55 @@ except:
         except:
             leader_val = "N/A"
 
-        # Calcoliamo la crescita fuori da ogni blocco HTML
         focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
         if len(focus_data) > 1:
             total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
+            # Determina il colore (verde se positivo, rosso se negativo)
+            color_stat = "#00FF00" if total_growth >= 0 else "#FF0000"
             growth_text = f"{total_growth:+.1f}%"
         else:
+            total_growth = 0
+            color_stat = "#808495"
             growth_text = "0.0%"
 
-        # --- 2. TITOLO BIANCO ---
-        st.markdown("<h3 style='text-align: center; color: #FFFFFF; margin-top: 0px;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
+        # --- 2. CSS PER IL BAGLIORE ORO ---
+        st.markdown("""
+            <style>
+            @keyframes goldGlow {
+                0% { text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; opacity: 0.9; }
+                50% { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffcc00; opacity: 1; }
+                100% { text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; opacity: 0.9; }
+            }
+            .gold-glow-text {
+                color: #FFD700 !important;
+                animation: goldGlow 2s infinite ease-in-out;
+                font-weight: bold;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+
+        # --- 3. TITOLO BIANCO (Stessa grandezza di Predictive Outlook) ---
+        # Usiamo 1.75rem o 28px per pareggiare l'H3 standard di Streamlit
+        st.markdown(f"<h3 style='text-align: center; color: #FFFFFF; margin-top: 0px; font-size: 28px;'>💡 Focus & Leadership</h3>", unsafe_allow_html=True)
         
-# BOX FOCUS CENTRALIZZATO
-        focus_data = filtered_df[filtered_df['Country Code'] == focus_country]
-        if len(focus_data) > 1:
-            total_growth = ((focus_data['GDP'].iloc[-1] - focus_data['GDP'].iloc[0]) / focus_data['GDP'].iloc[0]) * 100
-            st.markdown(f"""
-                <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
-                    <p style="margin: 0; color: #808495; font-size: 1.1rem;">Focus {focus_country}</p>
-                    <h2 style="margin: 10px 0; color: #F0BC3E; font-size: 2.8rem;">{total_growth:+.1f}%</h2>
-                    <p style="margin: 0; color: #808495;">Crescita nel periodo</p>
-                </div>
-            """, unsafe_allow_html=True)
+        # BOX FOCUS CENTRALIZZATO
+        st.markdown(f"""
+            <div style="text-align: center; background-color: #1C2128; padding: 25px; border-radius: 15px; border: 1px solid #30363D;">
+                <p style="margin: 0; color: #FFFFFF; font-size: 1.2rem;">Focus {focus_country}</p>
+                <h2 class="gold-glow-text" style="margin: 10px 0; font-size: 3.5rem;">{growth_text}</h2>
+                <p style="margin: 0; color: {color_stat}; font-weight: bold;">Crescita nel periodo</p>
+            </div>
+        """, unsafe_allow_html=True)
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # MARKET LEADER PULITO
-        if not filtered_df.empty:
-            leader = filtered_df.groupby('Country Code')['GDP'].last().idxmax()
-            st.markdown(f"""
-                <div style="text-align: center; margin-top: 10px;">
-                    <p style="color: #F0BC3E; font-size: 1.1rem; margin-bottom: 5px;">Market Leader nel {to_year}</p>
-                    <p style="color: #FFFFFF; font-size: 1.3rem;">Il PIL più elevato è di <strong>{leader}</strong></p>
-                </div>
-            """, unsafe_allow_html=True)
+        # MARKET LEADER CON TITOLO BIANCO
+        st.markdown(f"""
+            <div style="text-align: center; margin-top: 10px;">
+                <p style="color: #FFFFFF; font-size: 28px; margin-bottom: 5px; font-weight: bold;">Market Leader nel {to_year}</p>
+                <p style="color: #FFFFFF; font-size: 1.3rem;">Il PIL più elevato è di <strong style="color: #FFD700;">{leader_val}</strong></p>
+            </div>
+        """, unsafe_allow_html=True)
 
     # --- FOOTER TECNICO (Estratto dalle colonne per stare a fondo pagina) ---
     st.divider()
