@@ -7,8 +7,35 @@ from pathlib import Path
 from sklearn.linear_model import LinearRegression
 import base64
 
-# --- NUOVI IMPORT MODULARI ---
+def render_correlation_analysis(df, focus_country, selected_countries):
+    import plotly.express as px
+    if len(selected_countries) < 2:
+        st.info("Seleziona almeno due paesi per confrontare le correlazioni.")
+        return
+    pivot_df = df[df['Country Code'].isin(selected_countries)].pivot(index='Year', columns='Country Code', values='GDP').dropna()
+    if focus_country in pivot_df.columns:
+        corrs = pivot_df.corr()[focus_country].drop(focus_country).sort_values(ascending=False)
+        fig = px.bar(corrs, orientation='h', title=f"Sinergia con {focus_country}", color=corrs, color_continuous_scale='Sunset')
+        fig.update_layout(template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+        st.plotly_chart(fig, use_container_width=True)
 
+def render_clustering_analysis(df, selected_countries):
+    import plotly.express as px
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.cluster import KMeans
+    if len(selected_countries) < 3:
+        st.info("Seleziona almeno 3 paesi per l'analisi dei Cluster.")
+        return
+    pivot_df = df[df['Country Code'].isin(selected_countries)].pivot(index='Year', columns='Country Code', values='GDP').pct_change().mean()
+    max_gdp = df[df['Country Code'].isin(selected_countries)].groupby('Country Code')['GDP'].max()
+    cluster_data = pd.DataFrame({'Growth': pivot_df, 'GDP': max_gdp}).dropna()
+    if not cluster_data.empty:
+        scaled = StandardScaler().fit_transform(cluster_data)
+        cluster_data['Cluster'] = KMeans(n_clusters=min(3, len(cluster_data)), n_init=10).fit_predict(scaled)
+        fig = px.scatter(cluster_data, x='Growth', y='GDP', color=cluster_data['Cluster'].astype(str), text=cluster_data.index, title="Mappa Cluster")
+        fig.update_layout(template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+        st.plotly_chart(fig, use_container_width=True)
+        
 # --- 0. CONFIGURAZIONE FILE ---
 DATA_FILENAME = "data/gdp_data.csv"
 
