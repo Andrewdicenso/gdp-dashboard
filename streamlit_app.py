@@ -8,8 +8,8 @@ from sklearn.linear_model import LinearRegression
 import base64
 
 # --- NUOVI IMPORT MODULARI ---
-from analytics.correlations import render_correlation_analysis
-from analytics.clustering import render_clustering_analysis
+from correlations import render_correlation_analysis
+from clustering import render_clustering_analysis
 
 # --- 0. CONFIGURAZIONE FILE ---
 DATA_FILENAME = "data/gdp_data.csv"
@@ -315,20 +315,17 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 st.divider()
 
-        # --- INIZIO ANALISI AVANZATE (Nuova Sezione) ---
+# --- SEZIONE ANALISI AVANZATE ---
 st.markdown(f"<h3 style='color: #FFFFFF; margin-top: 10px; font-size: 24px;'>🔍 Deep Intelligence Analysis</h3>", unsafe_allow_html=True)
         
-        # Creiamo i tab per mantenere l'ordine che desideri
-tab_corr, tab_clust = st.tabs(["🔗 Correlazioni di Rischio", "👯 Cluster Economici"])
+tab_corr, tab_clust = st.tabs(["🔗 Analisi Correlazioni", "👯 Cluster Economici"])
 
 with tab_corr:
-            # Assicurati che 'gdp_df' sia il nome del tuo DataFrame originale
-            # e 'selected_countries' la lista dei paesi scelti nei filtri
-            from analytics.correlations import render_correlation_analysis
+            # Chiamiamo la funzione passandogli i dati
             render_correlation_analysis(gdp_df, focus_country, selected_countries)
 
 with tab_clust:
-            from analytics.clustering import render_clustering_analysis
+            # Chiamiamo la funzione del clustering
             render_clustering_analysis(gdp_df, selected_countries)
         
 st.divider()
