@@ -7,6 +7,10 @@ from pathlib import Path
 from sklearn.linear_model import LinearRegression
 import base64
 
+# --- NUOVI IMPORT MODULARI ---
+from analytics.correlations import render_correlation_analysis
+from analytics.clustering import render_clustering_analysis
+
 # --- 0. CONFIGURAZIONE FILE ---
 DATA_FILENAME = "data/gdp_data.csv"
 
@@ -202,7 +206,7 @@ else:
 
     st.plotly_chart(fig_map, use_container_width=True)
     st.divider()
-    
+
     # --- B. MERCATO AZIONARIO REAL TIME ---
     st.subheader("📊 Mercato Azionario RT")
     try:
@@ -309,6 +313,29 @@ st.markdown(f"""
             <strong>Metodologia:</strong> Regressione lineare basata sui trend 1960-{max_y}. Le proiezioni non includono shock esogeni imprevisti.
         </div>
     """, unsafe_allow_html=True)
+st.divider()
+
+        # --- INIZIO ANALISI AVANZATE (Nuova Sezione) ---
+st.markdown(f"<h3 style='color: #FFFFFF; margin-top: 10px; font-size: 24px;'>🔍 Deep Intelligence Analysis</h3>", unsafe_allow_html=True)
+        
+        # Creiamo i tab per mantenere l'ordine che desideri
+tab_corr, tab_clust = st.tabs(["🔗 Correlazioni di Rischio", "👯 Cluster Economici"])
+
+with tab_corr:
+            # Assicurati che 'gdp_df' sia il nome del tuo DataFrame originale
+            # e 'selected_countries' la lista dei paesi scelti nei filtri
+            from analytics.correlations import render_correlation_analysis
+            render_correlation_analysis(gdp_df, focus_country, selected_countries)
+
+with tab_clust:
+            from analytics.clustering import render_clustering_analysis
+            render_clustering_analysis(gdp_df, selected_countries)
+        
+st.divider()
+        # --- FINE ANALISI AVANZATE ---
+
+    # --- D. PREVISIONI (Il tuo codice esistente prosegue qui) ---
+st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
 
 st.divider()
 st.caption("© 2026 RGandja | Data Intelligence Unit")
