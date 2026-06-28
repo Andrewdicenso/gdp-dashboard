@@ -146,7 +146,7 @@ else:
         (gdp_df['Year'] <= to_year)
     ].dropna()
     
-    # --- A. MAPPA MONDIALE ---
+# --- A. MAPPA MONDIALE ---
     map_year_data = gdp_df[gdp_df['Year'] == to_year].copy()
     
     # ASSICURIAMOCI CHE CI SIANO DATI: Se mancano, creiamo un valore fittizio per forzare il disegno dei paesi selezionati
@@ -179,42 +179,30 @@ else:
         )   
     )
 
-    # --- INIEZIONE CSS PER IL BAGLIORE (GLOW) ---
+    # --- INIEZIONE CSS PER IL BAGLIORE GLOBALE A INTERMITTENZA ---
     st.markdown("""
     <style>
-    /* Animazione sulla variazione di opacità e colore di riempimento per SVG */
-    @keyframes continent-glow {
+    /* Definizione dell'effetto gold-glow-text */
+    @keyframes gold-glow-text {
         0%, 100% { 
-            fill: #E3B341 !important;
-            opacity: 0.4;
+            filter: brightness(0.9) drop-shadow(0 0 1px rgba(240, 188, 62, 0.2));
         }
         50% { 
-            fill: #F0BC3E !important;
-            opacity: 0.9;
+            filter: brightness(1.4) drop-shadow(0 0 10px rgba(240, 188, 62, 0.6));
         }
     }
 
-    /* Selettore mirato per i tracciati dei paesi generati da Plotly */
-    [data-testid="stPlotlyChart"] .chromap path.main-svg,
-    [data-testid="stPlotlyChart"] svg .trace.choropleth path {
-        animation: continent-glow 3s infinite ease-in-out !important;
-    }
-
-    /* Effetto alternato basato sulla posizione del tracciato nel DOM */
-    [data-testid="stPlotlyChart"] svg .trace.choropleth path:nth-child(odd) {
-        animation-duration: 4.2s !important;
-        animation-delay: 0.5s !important;
-    }
-    
-    [data-testid="stPlotlyChart"] svg .trace.choropleth path:nth-child(3n) {
-        animation-duration: 5.5s !important;
-        animation-delay: 1.5s !important;
+    /* Applichiamo la classe all'intero blocco SVG della mappa */
+    /* In questo modo la mappa pulsa globalmente senza intaccare i singoli stati */
+    [data-testid="stPlotlyChart"] svg.main-svg {
+        animation: gold-glow-text 4s infinite ease-in-out !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
     st.plotly_chart(fig_map, use_container_width=True)
     st.divider()
+    
     # --- B. MERCATO AZIONARIO REAL TIME ---
     st.subheader("📊 Mercato Azionario RT")
     try:
