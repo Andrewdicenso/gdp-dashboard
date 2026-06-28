@@ -35,7 +35,7 @@ def render_clustering_analysis(df, selected_countries):
         fig = px.scatter(cluster_data, x='Growth', y='GDP', color=cluster_data['Cluster'].astype(str), text=cluster_data.index, title="Mappa Cluster")
         fig.update_layout(template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         st.plotly_chart(fig, use_container_width=True)
-        
+
 # --- 0. CONFIGURAZIONE FILE ---
 DATA_FILENAME = "data/gdp_data.csv"
 
@@ -311,63 +311,63 @@ with col_right:
         st.divider()
 
     # --- D. ANALISI AVANZATE (DEEP INTELLIGENCE) ---
-    st.markdown(f"<h3 style='color: #FFFFFF; font-size: 26px; text-align: center;'>🔍 Deep Intelligence Analysis</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='color: #FFFFFF; font-size: 26px; text-align: center;'>🔍 Deep Intelligence Analysis</h3>", unsafe_allow_html=True)
     
-    t_corr, t_clust = st.tabs(["🔗 Correlazioni di Rischio", "👯 Cluster Economici"])
+        t_corr, t_clust = st.tabs(["🔗 Correlazioni di Rischio", "👯 Cluster Economici"])
 
-    with t_corr:
-        # Logica Correlazione
-        pivot_corr = filtered_df.pivot(index='Year', columns='Country Code', values='GDP').dropna(axis=1, how='all')
-        if focus_country in pivot_corr.columns and len(selected_countries) > 1:
-            corrs = pivot_corr.corr()[focus_country].drop(focus_country).sort_values(ascending=False)
-            fig_corr = px.bar(corrs, orientation='h', color=corrs, color_continuous_scale='Sunset', template="plotly_dark", title=f"Sinergia con {focus_country}")
-            fig_corr.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=400)
-            st.plotly_chart(fig_corr, use_container_width=True)
-        else:
-            st.info("Seleziona più paesi per analizzare le correlazioni.")
+        with t_corr:
+            # Logica Correlazione
+            pivot_corr = filtered_df.pivot(index='Year', columns='Country Code', values='GDP').dropna(axis=1, how='all')
+            if focus_country in pivot_corr.columns and len(selected_countries) > 1:
+                corrs = pivot_corr.corr()[focus_country].drop(focus_country).sort_values(ascending=False)
+                fig_corr = px.bar(corrs, orientation='h', color=corrs, color_continuous_scale='Sunset', template="plotly_dark", title=f"Sinergia con {focus_country}")
+                fig_corr.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=400)
+                st.plotly_chart(fig_corr, use_container_width=True)
+            else:
+                st.info("Seleziona più paesi per analizzare le correlazioni.")
 
-    with t_clust:
-        # Logica Clustering
-        from sklearn.preprocessing import StandardScaler
-        from sklearn.cluster import KMeans
-        if len(selected_countries) >= 3:
-            c_growth = filtered_df.pivot(index='Year', columns='Country Code', values='GDP').pct_change().mean()
-            c_max = filtered_df.groupby('Country Code')['GDP'].max()
-            c_df = pd.DataFrame({'Growth': c_growth, 'GDP': c_max}).dropna()
-            if not c_df.empty:
-                scaled = StandardScaler().fit_transform(c_df)
-                c_df['Cluster'] = KMeans(n_clusters=min(3, len(c_df)), n_init=10, random_state=42).fit_predict(scaled)
-                fig_cl = px.scatter(c_df, x='Growth', y='GDP', color=c_df['Cluster'].astype(str), text=c_df.index, template="plotly_dark", title="Mappa dei Cluster Economici")
-                fig_cl.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=400)
-                st.plotly_chart(fig_cl, use_container_width=True)
-        else:
-            st.info("Il clustering richiede almeno 3 paesi selezionati.")
+        with t_clust:
+            # Logica Clustering
+            from sklearn.preprocessing import StandardScaler
+            from sklearn.cluster import KMeans
+            if len(selected_countries) >= 3:
+                c_growth = filtered_df.pivot(index='Year', columns='Country Code', values='GDP').pct_change().mean()
+                c_max = filtered_df.groupby('Country Code')['GDP'].max()
+                c_df = pd.DataFrame({'Growth': c_growth, 'GDP': c_max}).dropna()
+                if not c_df.empty:
+                    scaled = StandardScaler().fit_transform(c_df)
+                    c_df['Cluster'] = KMeans(n_clusters=min(3, len(c_df)), n_init=10, random_state=42).fit_predict(scaled)
+                    fig_cl = px.scatter(c_df, x='Growth', y='GDP', color=c_df['Cluster'].astype(str), text=c_df.index, template="plotly_dark", title="Mappa dei Cluster Economici")
+                    fig_cl.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=400)
+                    st.plotly_chart(fig_cl, use_container_width=True)
+            else:
+                st.info("Il clustering richiede almeno 3 paesi selezionati.")
 
-    # --- E. PREVISIONI (Predictive Outlook) ---
-    st.divider()
-    st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
-    fig_pred = go.Figure()
-    
-    for country in selected_countries:
-        c_full = gdp_df[gdp_df['Country Code'] == country].dropna()
-        if len(c_full) > 1:
-            X = c_full['Year'].values.reshape(-1, 1)
-            y = c_full['GDP'].values
-            model = LinearRegression().fit(X, y)
-            future = np.array(range(max_y + 1, max_y + 6)).reshape(-1, 1)
-            preds = model.predict(future)
-            
-            fig_pred.add_trace(go.Scatter(x=c_full['Year'], y=y, name=f"{country} (Storico)"))
-            fig_pred.add_trace(go.Scatter(x=future.flatten(), y=preds, name=f"{country} (Forecasting)", line=dict(dash='dash')))
-            
-    fig_pred.update_layout(template="plotly_dark", height=550, margin=dict(l=0, r=0, t=20, b=0), paper_bgcolor='rgba(0,0,0,0)')
-    st.plotly_chart(fig_pred, use_container_width=True)
-    
-    st.markdown(f"""
-        <div style="text-align: justify; color: #808495; font-size: 0.95rem; margin-top: 15px; border-left: 3px solid #F0BC3E; padding-left: 15px;">
-            <strong>Metodologia:</strong> Regressione lineare basata sui trend 1960-{max_y}. Le proiezioni non includono shock esogeni imprevisti.
-        </div>
-    """, unsafe_allow_html=True)
+        # --- E. PREVISIONI (Predictive Outlook) ---
+        st.divider()
+        st.subheader("🔮 Predictive Outlook: Prossimi 5 Anni")
+        fig_pred = go.Figure()
+        
+        for country in selected_countries:
+            c_full = gdp_df[gdp_df['Country Code'] == country].dropna()
+            if len(c_full) > 1:
+                X = c_full['Year'].values.reshape(-1, 1)
+                y = c_full['GDP'].values
+                model = LinearRegression().fit(X, y)
+                future = np.array(range(max_y + 1, max_y + 6)).reshape(-1, 1)
+                preds = model.predict(future)
+                
+                fig_pred.add_trace(go.Scatter(x=c_full['Year'], y=y, name=f"{country} (Storico)"))
+                fig_pred.add_trace(go.Scatter(x=future.flatten(), y=preds, name=f"{country} (Forecasting)", line=dict(dash='dash')))
+                
+        fig_pred.update_layout(template="plotly_dark", height=550, margin=dict(l=0, r=0, t=20, b=0), paper_bgcolor='rgba(0,0,0,0)')
+        st.plotly_chart(fig_pred, use_container_width=True)
+        
+        st.markdown(f"""
+            <div style="text-align: justify; color: #808495; font-size: 0.95rem; margin-top: 15px; border-left: 3px solid #F0BC3E; padding-left: 15px;">
+                <strong>Metodologia:</strong> Regressione lineare basata sui trend 1960-{max_y}. Le proiezioni non includono shock esogeni imprevisti.
+            </div>
+        """, unsafe_allow_html=True)
 
-    st.divider()
-    st.caption("© 2026 RGandja | Data Intelligence Unit")
+        st.divider()
+        st.caption("© 2026 RGandja | Data Intelligence Unit")
