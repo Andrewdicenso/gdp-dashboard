@@ -149,14 +149,42 @@ else:
     # --- A. MAPPA MONDIALE ---
     map_year_data = gdp_df[gdp_df['Year'] == to_year].dropna()
     fig_map = px.choropleth(
-        map_year_data, locations="Country Code", color="GDP", hover_name="Country Name", 
-        color_continuous_scale=["#1C2128", "#E3B341", "#F0BC3E"], template="plotly_dark"
+    map_year_data, locations="Country Code", color="GDP", hover_name="Country Name", 
+    color_continuous_scale=["#1C2128", "#E3B341", "#F0BC3E"], template="plotly_dark"
     )
     fig_map.update_layout(
-        height=600, margin={"r":0,"t":0,"l":0,"b":0},
-        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-        geo=dict(showframe=False, showcoastlines=True, projection_type='natural earth', bgcolor='rgba(0,0,0,0)')   
+    height=600, margin={"r":0,"t":0,"l":0,"b":0},
+    paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+    geo=dict(showframe=False, showcoastlines=True, projection_type='natural earth', bgcolor='rgba(0,0,0,0)')   
     )
+
+# --- INIEZIONE CSS PER IL BAGLIORE (GLOW) ---
+    st.markdown("""
+    <style>
+    /* Definizione dell'animazione di pulsazione */
+    @keyframes continent-glow {
+        0%, 100% { filter: drop-shadow(0 0 2px #F0BC3E); opacity: 0.8; }
+        50% { filter: drop-shadow(0 0 15px #F0BC3E); opacity: 1; }
+    }
+
+    /* Applichiamo l'animazione ai tracciati della mappa (choropleth) */
+    /* Nota: selezioniamo le 'path' all'interno della 'choropleth' di Plotly */
+    [data-testid="stPlotlyChart"] svg.main-svg .choropleth path {
+        animation: continent-glow 3s infinite ease-in-out;
+    }
+
+    /* Per rendere l'effetto alternato/casuale su diversi paesi */
+    [data-testid="stPlotlyChart"] svg.main-svg .choropleth path:nth-child(odd) {
+        animation-duration: 4s;
+        animation-delay: 1s;
+    }
+    [data-testid="stPlotlyChart"] svg.main-svg .choropleth path:nth-child(3n) {
+        animation-duration: 5s;
+        animation-delay: 2s;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     st.plotly_chart(fig_map, use_container_width=True)
     st.divider()
 
