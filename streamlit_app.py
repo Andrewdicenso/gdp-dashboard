@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 from pathlib import Path
 from sklearn.linear_model import LinearRegression
 import base64
+import yfinance as yf
 
 # --- 0. CONFIGURAZIONE FILE ---
 DATA_FILENAME = "data/gdp_data.csv"
@@ -35,52 +36,90 @@ st.components.v1.html(
     height=0,
 )
 
-# --- 2. CSS CUSTOM POTENZIATO (Include Gold Glow e Responsive Layout) ---
+# --- 2. CSS CUSTOM POTENZIATO (Distanze, Allineamenti e Glow Intermittente) ---
 st.markdown("""
     <style>
-    .block-container { padding-top: 1.5rem !important; max-width: 92% !important; }
-    .stApp { background-color: #0E1117; color: #FFFFFF; }
-    
-    /* Animazione Bagliore Oro per Risultati */
-    @keyframes goldGlow {
-        0% { text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; opacity: 0.9; }
-        50% { text-shadow: 0 0 20px #ffd700, 0 0 35px #ffcc00; opacity: 1; }
-        100% { text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; opacity: 0.9; }
-    }
-    .gold-glow-text {
-        color: #FFD700 !important;
-        animation: goldGlow 2.5s infinite ease-in-out;
-        font-weight: bold;
+    /* 1. Spaziatura Generale tra i Blocchi */
+    [data-testid="stVerticalBlock"] > div {
+        gap: 3rem !important; /* Aumenta lo spazio tra le sezioni principali */
+        margin-bottom: 1.5rem;
     }
 
-    h1, h2, h3 { font-family: 'Playfair Display', serif; color: #F0BC3E; text-align: center; }
-    .brand-text { font-size: 3rem; font-weight: bold; color: #F0BC3E; }
+    /* 2. Container Principale */
+    .block-container { padding-top: 1.5rem !important; max-width: 94% !important; }
+    .stApp { background-color: #0E1117; color: #FFFFFF; }
     
-    /* Pulizia Grafici */
-    .js-plotly-plot { border-radius: 15px; }
-    div[data-testid="stMetricValue"] { font-size: 1.8rem !important; }
+    /* 3. Animazione Glow Intermittente Gold */
+    @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 5px rgba(240, 188, 62, 0.2); border: 1px solid rgba(240, 188, 62, 0.1); }
+        50% { box-shadow: 0 0 20px rgba(240, 188, 62, 0.4); border: 1px solid rgba(240, 188, 62, 0.6); }
+    }
+
+    /* Applicazione Glow a Grafici, Quadrati (Metriche) e Tabelle */
+    [data-testid="stPlotlyChart"], 
+    [data-testid="stMetric"], 
+    .stDataFrame,
+    [data-testid="stTable"] {
+        background-color: rgba(255, 255, 255, 0.02) !important;
+        border-radius: 12px !important;
+        padding: 15px !important;
+        animation: pulse-glow 4s infinite ease-in-out !important;
+    }
+
+    /* 4. Allineamento Titoli Metriche (Quasi attaccati sopra) */
+    [data-testid="stMetric"] label {
+        margin-bottom: -15px !important; 
+        font-size: 0.9rem !important;
+        color: #F0BC3E !important;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    /* 5. Pareggiamento Altezze (Grafico e Quadrati) */
+    [data-testid="stHorizontalBlock"] {
+        align-items: stretch !important;
+    }
+    
+    /* Titoli Sezioni */
+    h1, h2, h3 { font-family: 'Playfair Display', serif; color: #F0BC3E; text-align: center; margin-bottom: 1rem; }
+    .brand-text { font-size: 3rem; font-weight: bold; color: #F0BC3E; }
     
     #MainMenu, footer { display: none; }
     </style>
 """, unsafe_allow_html=True)
 
-# --- 3. CARICAMENTO LOGO ---
+# --- 3. FUNZIONI UTILI ---
 def get_base64_img(path):
     try:
         with open(path, "rb") as f:
             return base64.b64encode(f.read()).decode()
     except: return None
 
-img_b64 = get_base64_img("logo.png")
-logo_html = f'<img src="data:image/png;base64,{img_b64}" width="60">' if img_b64 else '<span style="font-size: 50px;">📈</span>'
+@st.cache_data
+def get_gdp_data():
+    try:
+        # Nota: assicurati che il file esista o usa dati dummy per test
+        raw_gdp_df = pd.read_csv(DATA_FILENAME)
+        gdp_df = raw_gdp_df.melt(
+            ['Country Code', 'Country Name'], 
+            [str(x) for x in range(1960, 2026)], 
+            var_name='Year', value_name='GDP'
+        )
+        gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
+        gdp_df['GDP'] = pd.to_numeric(gdp_df['GDP'], errors='coerce')
+        return gdp_df
+    except:
+        return pd.DataFrame()
 
-# --- 4. HEADER BRANDIZZATO ---
+# --- 4. HEADER ---
+img_b64 = get_base64_img("logo.png")
+logo_html = f'<img src="data:image/png;base64,{img_b64}" width="60">' if img_b64 else '📈'
 st.markdown(f"""
-    <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 10px; margin-bottom: 5px;">
-        {logo_html}
-        <span class="brand-text" style="line-height: 1;">RGandja</span>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 10px;">
+        <span style="font-size: 50px;">{logo_html}</span>
+        <span class="brand-text">RGandja</span>
     </div>
-    <h2 style='text-align: center; margin-top: 0; font-size: 1.5rem; color: #FFFFFF; opacity: 0.8;'>Global Economic Intelligence</h2>
+    <h2 style='color: #FFFFFF; opacity: 0.8; font-size: 1.2rem;'>Global Economic Intelligence</h2>
 """, unsafe_allow_html=True)
 
 # --- 5. DATA ENGINE (Caricamento e Analisi) ---
@@ -205,6 +244,12 @@ else:
     
         # --- B. MERCATO AZIONARIO REAL TIME (Sostituisci la tua sezione B con questa) ---
     st.subheader("📊 Mercato Azionario RT")
+    m_data = pd.DataFrame({
+    "Asset": ["AAPL", "GOOGL", "MSFT", "BTC-USD"],
+    "Prezzo": ["189.45", "142.10", "402.12", "67231.00"],
+    "Var %": ["+1.2%", "-0.5%", "+0.8%", "+2.1%"]
+    })
+    st.dataframe(m_data, use_container_width=True, hide_index=True)
     
     import yfinance as yf
     
