@@ -254,7 +254,7 @@ else:
     except Exception as e:
         st.error(f"Errore tecnico nel recupero dati: {e}")
 
-py
+
     # --- C. LAYOUT AFFIANCATO: TREND (Sinistra) + FOCUS & LEADERSHIP (Destra) ---
     # Usiamo vertical_alignment="center" per assicurarci che tutto sia allineato
     col_left, col_right = st.columns([2, 1], vertical_alignment="center") 
