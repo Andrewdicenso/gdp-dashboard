@@ -254,11 +254,15 @@ else:
     except Exception as e:
         st.error(f"Errore tecnico nel recupero dati: {e}")
 
+py
     # --- C. LAYOUT AFFIANCATO: TREND (Sinistra) + FOCUS & LEADERSHIP (Destra) ---
-col_left, col_right = st.columns([2, 1])
-with col_left:
+    # Usiamo vertical_alignment="center" per assicurarci che tutto sia allineato
+    col_left, col_right = st.columns([2, 1], vertical_alignment="center") 
+    
+    with col_left:
         st.subheader("📈 Analisi Trend & Eventi Critici")
-        fig_line = px.line(filtered_df, x="Year", y="GDP", color="Country Code", template="plotly_dark")
+        # Impostiamo height=550 per coprire l'altezza dei due box a destra
+        fig_line = px.line(filtered_df, x="Year", y="GDP", color="Country Code", template="plotly_dark", height=550)
         
         # Inserimento Anomalie (Shock Economici)
         anomalies_found = filtered_df[filtered_df['Is_Anomaly'] == True]
