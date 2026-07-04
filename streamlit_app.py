@@ -203,32 +203,56 @@ else:
     st.plotly_chart(fig_map, use_container_width=True)
     st.divider()
     
-    # --- B. MERCATO AZIONARIO REAL TIME ---
+        # --- B. MERCATO AZIONARIO REAL TIME (Sostituisci la tua sezione B con questa) ---
     st.subheader("📊 Mercato Azionario RT")
+    
+    import yfinance as yf
+    
+    @st.cache_data(ttl=60) # Aggiorna ogni minuto
+    def get_enhanced_market_data():
+        tickers = ["AAPL", "GOOGL", "MSFT", "TSLA", "EURUSD=X", "BTC-USD"]
+        results = []
+        for t in tickers:
+            ticker_obj = yf.Ticker(t)
+            # Tenta di prendere dati dell'ultimo minuto (Real Time)
+            df_rt = ticker_obj.history(period="1d", interval="1m")
+            
+            if not df_rt.empty:
+                last_p = df_rt['Close'].iloc[-1]
+                prev_p = df_rt['Open'].iloc[0]
+                status = "🟢 LIVE"
+            else:
+                # Se il mercato è chiuso, prendi l'ultima sessione completa
+                df_hist = ticker_obj.history(period="1d")
+                last_p = df_hist['Close'].iloc[-1] if not df_hist.empty else 0
+                prev_p = df_hist['Open'].iloc[0] if not df_hist.empty else 0
+                status = "🔴 CHIUSO"
+            
+            change = ((last_p - prev_p) / prev_p * 100) if prev_p != 0 else 0
+            results.append({
+                "Asset": t, 
+                "Prezzo": f"{last_p:.2f}", 
+                "Var %": f"{change:+.2f}%", 
+                "Stato": status
+            })
+        return pd.DataFrame(results)
+
     try:
-        import yfinance as yf
-        @st.cache_data(ttl=300)
-        def get_market_data():
-            tickers = ["AAPL", "GOOGL", "MSFT", "TSLA", "EURUSD=X", "BTC-USD"]
-            data = []
-            for t in tickers:
-                s = yf.Ticker(t)
-                hist = s.history(period="2d")
-                if len(hist) > 1:
-                    last_p = hist['Close'].iloc[-1]
-                    change = ((last_p - hist['Close'].iloc[0]) / hist['Close'].iloc[0]) * 100
-                    data.append({"Asset": t, "Prezzo": f"{last_p:.2f}", "Var %": change})
-            return pd.DataFrame(data)
-
-        m_df = get_market_data()
-        cols = st.columns(len(m_df))
-        for i, row in m_df.iterrows():
-            delta_color = "normal" if row['Var %'] > 0 else "inverse"
-            cols[i].metric(row['Asset'], row['Prezzo'], f"{row['Var %']:+.2f}%", delta_color=delta_color)
-    except:
-        st.info("Dati di mercato momentaneamente non disponibili")
-
-st.divider()
+        m_df = get_enhanced_market_data()
+        if not m_df.empty:
+            # Mostra la tabella formattata
+            st.dataframe(m_df, use_container_width=True, hide_index=True)
+            
+            # Opzionale: Mantieni anche le metriche visive sopra la tabella
+            cols = st.columns(len(m_df))
+            for i, row in m_df.iterrows():
+                val_float = float(row['Var %'].replace('%', ''))
+                cols[i].metric(row['Asset'], row['Prezzo'], row['Var %'], 
+                               delta_color="normal" if val_float > 0 else "inverse")
+        else:
+            st.info("Dati di mercato momentaneamente non disponibili")
+    except Exception as e:
+        st.error(f"Errore tecnico nel recupero dati: {e}")
 
     # --- C. LAYOUT AFFIANCATO: TREND (Sinistra) + FOCUS & LEADERSHIP (Destra) ---
 col_left, col_right = st.columns([2, 1])
